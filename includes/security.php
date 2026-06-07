@@ -12,35 +12,9 @@ function session_start_safe(): void {
     }
 }
 
-/**
- * Генерирует и сохраняет CSRF-токен в сессии.
- * Возвращает скрытое поле для вставки в форму.
- */
-function csrf_field(): string {
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-    $token = $_SESSION['csrf_token'];
-    return '<input type="hidden" name="csrf_token" value="' . $token . '">';
-}
-
-// Проверяет CSRF-токен из POST-запроса. ПОКА ХЗ
-
-function csrf_verify(): void {
-    $token = $_POST['csrf_token'] ?? '';
-    if (empty($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $token)) {
-        http_response_code(403);
-        die('CSRF token mismatch. Reload the page and try again.');
-    }
-    // Одноразовый токен — обновляем после каждой проверки
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
-
-
 function e(string $str): string {
     return htmlspecialchars($str, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
-
 
 /**строка из $_POST / $_GET */
 function input_str(string $key, array $source = []): string {

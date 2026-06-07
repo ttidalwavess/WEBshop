@@ -22,7 +22,6 @@ CREATE TABLE IF NOT EXISTS product_categories (
     id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name        VARCHAR(100) NOT NULL,
     slug        VARCHAR(110) NOT NULL UNIQUE,   -- URL-friendly name
-    description TEXT,
     sort_order  INT UNSIGNED NOT NULL DEFAULT 0,
     created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -34,8 +33,8 @@ CREATE TABLE IF NOT EXISTS products (
     slug        VARCHAR(210) NOT NULL UNIQUE,
     description TEXT,
     price       DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-    stock       INT UNSIGNED NOT NULL DEFAULT 0,  -- количество на складе
-    is_active   TINYINT(1) NOT NULL DEFAULT 1,
+    size        VARCHAR(100) DEFAULT "Универсальный"
+    is_top      TINYINT(1) NOT NULL DEFAULT 0, --топ продаж или нет
     created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES product_categories(id) ON DELETE CASCADE

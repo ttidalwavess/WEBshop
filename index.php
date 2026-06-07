@@ -1,3 +1,12 @@
+<?php
+require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/includes/security.php';
+require_once __DIR__ . '/includes/categories.php';
+
+session_start_safe();
+$categories = categories_all();
+// ... HTML с <?= include header.php ?>
+// ... foreach $categories -> карточка категории (ссылка на /catalog.php?slug=...)
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -10,7 +19,7 @@
 <div class="all">
     <div class="header">
         <div class="logo">
-            <h1 class="hotelname"> Это просто хэдер </h1>
+           <?php include __DIR__ . '/includes/header.php'; ?>
         </div>
 
         <div class="authorization">

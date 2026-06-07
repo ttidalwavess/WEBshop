@@ -1,5 +1,5 @@
+//можешь тспользовать для связи в своем хэдере
 <?php
-// includes/header.php — шапка сайта
 ?>
 <header class="site-header">
     <div class="container">
