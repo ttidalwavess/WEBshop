@@ -4,7 +4,7 @@ require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/includes/security.php';
 require_once __DIR__ . '/includes/auth.php';
 
-session_start_safe()
+session_start_safe();
 
 if (is_logged_in()) {
     header('Location: /index.php');
@@ -15,8 +15,6 @@ $error = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST'){
-    csrf_verify();
-
     $user_name = input_str('username');
     $email = input_str('email');
     $password = $_POST['password'] ?? '';
@@ -53,8 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
         <?php endif; ?>
 
         <form method="post" action="/register.php" novalidate>
-            <?= csrf_field() ?>
-
             <label for="username">Имя пользователя</label>
             <input type="text" id="username" name="username"
                    value="<?= e($_POST['username'] ?? '') ?>"
@@ -75,7 +71,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
         <p class="auth-box__footer">Уже есть аккаунт? <a href="/login.php">Войти</a></p>
     </div>
 </main>
-
-<?php include __DIR__ . '/includes/footer.php'; ?>
 </body>
 </html>

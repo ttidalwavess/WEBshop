@@ -12,17 +12,12 @@ CREATE TABLE IF NOT EXISTS users (
     created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Администратор (пароль: admin123)
-INSERT INTO users (username, email, password, role) VALUES
-('admin', 'admin@shop.local',
- '$2y$12$EXAMPLEHASHREPLACEME111111111111111111111111111111111',
- 'admin');
-
 CREATE TABLE IF NOT EXISTS product_categories (
     id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name        VARCHAR(100) NOT NULL,
     slug        VARCHAR(110) NOT NULL UNIQUE,   -- URL-friendly name
     sort_order  INT UNSIGNED NOT NULL DEFAULT 0,
+    is_accessory TINYINT(1) NOT NULL DEFAULT 0,
     created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

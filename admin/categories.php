@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $result = ($action === 'create')
             ? category_create($name, $desc, $sortOrder)
-            : category_update($name, $desc, $sortOrder);
+            : category_update($id, $name, $desc, $sortOrder);
         
         if (isset($result['error'])) {
             $error = $result['error'];
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($action === 'delete') {
         $result = category_delete($id);
-        if(isset(['error'])){
+        if(isset($result['error'])){
             $error = $result['error'];
         } else {
             $message = 'Категория удалена';

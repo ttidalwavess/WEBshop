@@ -1,4 +1,4 @@
-//можешь тспользовать для связи в своем хэдере
+
 <?php
 ?>
 <header class="site-header">
@@ -14,7 +14,6 @@
                     <a href="/admin/index.php">Админка</a>
                 <?php endif; ?>
                 <form method="post" action="/logout.php" style="display:inline">
-                    <?= csrf_field() ?>
                     <button type="submit" class="btn-link">Выйти (<?= e($_SESSION['username']) ?>)</button>
                 </form>
             <?php else: ?>

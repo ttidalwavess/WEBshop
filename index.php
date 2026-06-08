@@ -5,8 +5,9 @@ require_once __DIR__ . '/includes/categories.php';
 
 session_start_safe();
 $categories = categories_all();
-// ... HTML с <?= include header.php ?>
-// ... foreach $categories -> карточка категории (ссылка на /catalog.php?slug=...)
+// ... HTML с <?= include header.php
+// 
+// ... foreach $categories -> карточка категории (ссылка на /catalog.php?slug=...) ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -24,7 +25,6 @@ $categories = categories_all();
 
         <div class="authorization">
             <div class="menu" id="menu">
-
             </div>
         </div>
     </div>

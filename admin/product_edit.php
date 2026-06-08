@@ -19,7 +19,7 @@ if (!$product) {
 $messege = '';
 $error = '';
 
-if ($_SERVER['REQUIRE_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verify();
     $action = input_str('action');
 

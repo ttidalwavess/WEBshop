@@ -6,7 +6,7 @@ require_once __DIR__ . '/categories.php';   // нужна unique_slug()
 
 //reading
 
-function products_by_categories(int $categoryId, int $limit = 20, int $offset = 0): array {
+function products_by_category(int $categoryId, int $limit = 20, int $offset = 0): array {
     $stmt = db()->prepare(
     'SELECT p.*, pi.filename AS main_image
          FROM products p
@@ -19,7 +19,7 @@ function products_by_categories(int $categoryId, int $limit = 20, int $offset = 
     return $stmt->fetchAll();
 }
 
-function product_by_id(int $id): array|false {
+function product_by_id(int $id): array {
     $stmt = db()->prepare(
         'SELECT p.*, c.name AS category_name, c.slug AS category_slug
          FROM products p
@@ -33,7 +33,7 @@ function product_by_id(int $id): array|false {
     return $row;
 }
 
-function product_by_slug(string $slug): array|false {
+function product_by_slug(string $slug): array {
     $stmt = db()->prepare(
         'SELECT p.*, c.name AS category_name, c.slug AS category_slug
          FROM products p
@@ -48,8 +48,8 @@ function product_by_slug(string $slug): array|false {
 }
 
 function products_all(int $limit = 50, int $offset = 0): array{
-    $stmt = db()->precare(
-        'SELECT p.*, c.name AS category_name, pi.falename AS main_image
+    $stmt = db()->prepare(
+        'SELECT p.*, c.name AS category_name, pi.filename AS main_image
         FROM products p
         JOIN product_categories c ON c.id = p.category_id
         LEFT JOIN product_images pi ON pi.product_id = p.id AND pi.is_main = 1
@@ -104,20 +104,20 @@ function product_update(int $id, array $data): array {
     if ($name ==='')return ['error' => 'Название товара обязательно.'];
 
     $pdo = db();
-    $slug = unique_slag($pdo, 'products', make_slug($name), $id);
+    $slug = unique_slug($pdo, 'products', make_slug($name), $id);
 
     $stmt = $pdo->prepare(
         'UPDATE products SET category_id=?, name=?, slug=?, description=?,
                              price=?, size=?, is_top=?
         WHERE id = ?'
     );
-    stmt->execute([$categoryId, $name, $desc, $price, $size, $is_top, $id]);
+    $stmt->execute([$categoryId, $name, $desc, $price, $size, $is_top, $id]);
 
     return ['ok' => true];
 }
 
 //delete
-function product_delete($int $id): array{
+function product_delete(int $id): array{
     require_admin();
 
     $images = product_images($id);

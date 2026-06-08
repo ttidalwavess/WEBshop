@@ -6,24 +6,24 @@ require_once __DIR__ . '/security.php';
 //чтение
 function categories_all(): array {
     $stmt = db()->query(
-        'SELECT id, name, slug, description, sort_order FROM product_categories ORDER BY sort_order, name'
+        'SELECT id, name, slug, sort_order FROM product_categories ORDER BY sort_order, name'
     );
     return $stmt->fetchAll();
 }
 
-function category_by_id(int $id): array|false {
+function category_by_id(int $id) {
     $stmt = db()->prepare('SELECT * FROM product_categories WHERE id = ? LIMIT 1');
     $stmt->execute([$id]);
     return $stmt->fetch();
 }
 
-function category_by_slug(string $slug): array|false {
+function category_by_slug(string $slug) {
     $stmt = db()->prepare('SELECT * FROM product_categories WHERE slug = ? LIMIT 1');
     $stmt->execute([$slug]);
     return $stmt->fetch();
 }
 
-function category_create(string $name, string $description, int $sort_order): array {
+function category_create(string $name, string $description, int $sort_order, int $is_accessory): array {
     require_admin();
 
     $name = mb_substr(trim($name), 0, 100);
@@ -36,14 +36,14 @@ function category_create(string $name, string $description, int $sort_order): ar
     $slug = unique_slug($pdo, 'product_categories', $slug);
 
     $stmt = $pdo->prepare(
-        'INSERT INTO product_categories (name, slug, description, sort_order) VALUES (?, ?, ?, ?)'
+        'INSERT INTO product_categories (name, slug, description, sort_order, is_accessory) VALUES (?, ?, ?, ?)'
     );
-    $stmt->execute([$name, $slug, $description, $sort_order]);
+    $stmt->execute([$name, $slug, $description, $sort_order, $is_accessory]);
 
     return ['ok' => true, 'id' => (int)$pdo->lastInsertId()];
 }
 
-function category_update(int $id, string $name, string $description, int $sort_order): array {
+function category_update(int $id, string $name, string $description, int $sort_order, int $is_accessory): array {
     require_admin();
 
     $name = mb_substr(trim($name), 0, 100);
@@ -56,9 +56,9 @@ function category_update(int $id, string $name, string $description, int $sort_o
     $slug = unique_slug($pdo, 'product_categories', $slug, $id);
 
     $stmt = $pdo->prepare(
-        'UPDATE product_categories SET name=?, slug=?, description=?, sort_order=? WHERE id=?'
+        'UPDATE product_categories SET name=?, slug=?, description=?, sort_order=?, is_accessory = ? WHERE id=?'
     );
-    $stmt->execute([$name, $slug, $description, $sort_order, $id]);
+    $stmt->execute([$name, $slug, $description, $sort_order, $id, $is_accessory]);
 
     return ['ok' => true];
 }
