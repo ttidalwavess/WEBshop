@@ -23,6 +23,17 @@ function category_by_slug(string $slug) {
     return $stmt->fetch();
 }
 
+function categories_accessories(): array {
+    $stmt = db()->prepare(
+        "SELECT id, name, slug, sort_order
+         FROM product_categories
+         WHERE is_accessory = 1 
+         ORDER BY sort_order, name"
+    );
+    $stmt->execute();
+    return $stmt->fetchAll();
+}
+
 function category_create(string $name, string $description, int $sort_order, int $is_accessory): array {
     require_admin();
 

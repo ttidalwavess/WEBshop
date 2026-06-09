@@ -8,6 +8,6 @@ session_start_safe();
 $slug = input_str('slug', $_GET);
 $category = category_by_slug($slug);
 if (!$category) { http_response_code(404); die('Категория не найдена'); }
-$products = products_by_category($category['id']);
+$products = products_by_category($category['id'], 20, 0);
 ?>
 // ... HTML — сетка карточек товаров
