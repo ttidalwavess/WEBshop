@@ -1,0 +1,5 @@
+username =  'admin';
+email    = 'admin@shop.local';
+password = 'admin123'; (для входа)
+пароль при регистрации (загрузить самостоятельно на пхп му админ): 
+$2a$12$Md5rqiRfuG1I5.07tcOXYeINCoQ6NhFO/ySuOlAkHS6P9hKJ5rnOy

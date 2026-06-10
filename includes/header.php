@@ -1,0 +1,95 @@
+
+<?php
+if (!defined('ROOT')) die('Direct access forbidden');
+require_once ROOT . '/includes/security.php';
+
+//$_session['cart'] заполнит маша 
+$cart_count = 0;
+if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
+    foreach ($_SESSION['cart'] as $item) {
+        $cart_count += (int)($item['qty'] ?? 1);
+    }
+}
+
+$current = basename($_SERVER['PHP_SELF']);
+$current_cat = $_GET['cat'] ?? '';
+$callent_sale = isset($_GET['sale']);
+?>
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title><?= e($page_title ?? 'LIGHT | Женская одежда') ?></title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <?php if (!empty($extra_css)): ?>
+        <?php foreach ($extra_css as $css): ?>
+            <link rel="stylesheet" href="<?= e($css) ?>">
+        <?php endforeach; ?>
+    <?php endif; ?>
+</head>
+<body>
+<header class="header">
+    <span class="brand-name">Light</span>
+
+    <nav class="nav-center">
+        <a href="/catalog.php?cat=new"
+           class="nav-link <?= ($current === 'catalog.php' && $current_cat === 'new') ? 'active' : '' ?>">
+            Новинки
+        </a>
+        <span class="nav-divider"></span>
+        <a href="/catalog.php?cat=women"
+           class="nav-link <?= ($current === 'catalog.php' && $current_cat === 'women') ? 'active' : '' ?>">
+            Одежда
+        </a>
+        <span class="nav-divider"></span>
+        <a href="/catalog.php?cat=accessories"
+           class="nav-link <?= ($current === 'catalog.php' && $current_cat === 'accessories') ? 'active' : '' ?>">
+            Аксессуары
+        </a>
+        <span class="nav-divider"></span>
+        <a href="/catalog.php?sale=1"
+           class="nav-link <?= $current_sale ? 'active' : '' ?>">
+            Скидки
+        </a>
+    </nav>
+
+    <div class="header-icons">
+        <?php if (is_logged_in()): ?>
+            <a href="/logout.php" class="icon-btn" aria-label="Личный кабинет"> //должен быть аккаунт.пхп, пока для теста выход
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+            </a>
+        <?php else: ?>
+            <a href="/login.php" class="icon-btn" aria-label="Войти">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+            </a>
+        <?php endif; ?>
+
+        <a href="/cart.php" class="icon-btn cart-icon-wrap" aria-label="Корзина" style="position:relative">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"/>
+                <circle cx="20" cy="21" r="1"/>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            <span class="cart-badge" id="cart-count"
+                  style="<?= $cart_count === 0 ? 'display:none' : '' ?>">
+                <?= $cart_count ?>
+            </span>
+        </a>
+
+        <?php if (is_admin()): ?>
+            <a href="/admin/index.php" class="icon-btn" aria-label="Админка">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+            </a>
+        <?php endif; ?>
+    </div>
+</header>
+</body>
