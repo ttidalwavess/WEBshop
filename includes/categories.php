@@ -11,6 +11,17 @@ function categories_all(): array {
     return $stmt->fetchAll();
 }
 
+function categories_accessories(): array {
+    $stmt = db()->prepare(
+        "SELECT id, name, slug, sort_order
+         FROM product_categories
+         WHERE slug IN ('sumki', 'ukrasheniya')
+         ORDER BY sort_order, name"
+    );
+    $stmt->execute();
+    return $stmt->fetchAll();
+}
+
 function category_by_id(int $id) {
     $stmt = db()->prepare('SELECT * FROM product_categories WHERE id = ? LIMIT 1');
     $stmt->execute([$id]);
@@ -23,20 +34,8 @@ function category_by_slug(string $slug) {
     return $stmt->fetch();
 }
 
-function categories_accessories(): array {
-    $stmt = db()->prepare(
-        "SELECT id, name, slug, sort_order
-         FROM product_categories
-         WHERE is_accessory = 1 
-         ORDER BY sort_order, name"
-    );
-    $stmt->execute();
-    return $stmt->fetchAll();
-}
-
 function category_create(string $name, string $description, int $sort_order, int $is_accessory): array {
     require_admin();
-
     $name = mb_substr(trim($name), 0, 100);
     if ($name === '') {
         return ['error' => 'Название категории не может быть пустым.'];
@@ -47,16 +46,14 @@ function category_create(string $name, string $description, int $sort_order, int
     $slug = unique_slug($pdo, 'product_categories', $slug);
 
     $stmt = $pdo->prepare(
-        'INSERT INTO product_categories (name, slug, description, sort_order, is_accessory) VALUES (?, ?, ?, ?)'
+        'INSERT INTO product_categories (name, slug, sort_order) VALUES (?, ?, ?)'
     );
-    $stmt->execute([$name, $slug, $description, $sort_order, $is_accessory]);
-
+    $stmt->execute([$name, $slug, $sort_order]);
     return ['ok' => true, 'id' => (int)$pdo->lastInsertId()];
 }
 
 function category_update(int $id, string $name, string $description, int $sort_order, int $is_accessory): array {
     require_admin();
-
     $name = mb_substr(trim($name), 0, 100);
     if ($name === '') {
         return ['error' => 'Название не может быть пустым.'];
@@ -67,17 +64,14 @@ function category_update(int $id, string $name, string $description, int $sort_o
     $slug = unique_slug($pdo, 'product_categories', $slug, $id);
 
     $stmt = $pdo->prepare(
-        'UPDATE product_categories SET name=?, slug=?, description=?, sort_order=?, is_accessory = ? WHERE id=?'
+        'UPDATE product_categories SET name=?, slug=?, sort_order=?  WHERE id=?'
     );
-    $stmt->execute([$name, $slug, $description, $sort_order, $id, $is_accessory]);
-
+    $stmt->execute([$name, $slug, $sort_order, $id]);
     return ['ok' => true];
 }
 
 function category_delete(int $id): array {
     require_admin();
-
-    // Проверяем, есть ли товары в категории
     $stmt = db()->prepare('SELECT COUNT(*) FROM products WHERE category_id = ?');
     $stmt->execute([$id]);
     if ((int)$stmt->fetchColumn() > 0) {

@@ -1,9 +1,9 @@
 <?php
-
-require_once __DIR__ . '/../config/db.php';
-require_once __DIR__ . '/../includes/security.php';
-require_once __DIR__ . '/../includes/product.php';
-require_once __DIR__ . '/../includes/category.php';
+define('ROOT', dirname(__DIR__));
+require_once ROOT . '/config/db.php';
+require_once ROOT . '/includes/security.php';
+require_once ROOT . '/includes/products.php';
+require_once ROOT . '/includes/categories.php';
 
 session_start_safe();
 require_admin();
@@ -20,7 +20,6 @@ $messege = '';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    csrf_verify();
     $action = input_str('action');
 
     if ($action === 'update_product'){
@@ -31,36 +30,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'price' => input_float('price'),
             'size' => input_str('size'),
             'is_top' => isset($_POST['is_top']) ? 1 : 0,
+            'is_new' => isset($_POST['is_new']) ? 1 : 0,
         ]);
-        if(isset($result['error'])) {
-            $error = $result['error'];
-        } else {
-            $messege = 'Товар обновлён.';
-            $product = product_by_id($productId);
-        }
+        $error   = $result['error'] ?? '';
+        $message = $error ? '' : 'Товар обновлён.';
+        if (!$error) $product = product_by_id($productId);
     }
-
-    if($action === 'upload_image'){
-        $isMain = isset($_POST['is_main']);
-        $result = product_image_upload($productId, 'new_image', $isMain);
-        if (isset($result['error'])){
-            $error = $result['error'];
-        } else {
-            $messege = 'Изображение загружено.';
-        }
+    if ($action === 'upload_image') {
+        $result  = product_image_upload($productId, 'new_image', isset($_POST['is_main']));
+        $error   = $result['error'] ?? '';
+        $message = $error ? '' : 'Изображение загружено.';
     }
-
     if ($action === 'delete_image') {
-        $imageId = input_int('image_id');
-        $result = product_image_delete($imageId);
-        $messege = isset($result[error]) ? '' : 'Изображение удалено';
-        $error = $result['error'] ?? '';
+        $result  = product_image_delete(input_int('image_id'));
+        $error   = $result['error'] ?? '';
+        $message = $error ? '' : 'Изображение удалено.';
     }
-
-    if ($action === 'set_main_image'){
-        $imageId = input_int('image_id');
-        product_image_set_main($imageId, $productId);
-        $messege = 'Главное фото изменено';
+    if ($action === 'set_main_image') {
+        product_image_set_main(input_int('image_id'), $productId);
+        $message = 'Главное фото изменено.';
     }
 }
 
@@ -86,20 +74,13 @@ $images = product_images($productId);
         <a href="/admin/products.php" class="btn btn--ghost">← К списку</a>
     </div>
 
-    <?php if ($message): ?>
-        <div class="alert alert--success"><?= e($message) ?></div>
-    <?php endif; ?>
-    <?php if ($error): ?>
-        <div class="alert alert--error"><?= e($error) ?></div>
-    <?php endif; ?>
+    <?php if ($message): ?><div class="alert alert--success"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></div><?php endif; ?>
+    <?php if ($error):   ?><div class="alert alert--error"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></div><?php endif; ?>
 
-    <!-- ДАННЫЕ ТОВАРА -->
     <section class="admin-card">
         <h2>Основные данные</h2>
         <form method="post" action="/admin/product_edit.php?id=<?= $productId ?>">
-            <?= csrf_field() ?>
             <input type="hidden" name="action" value="update_product">
-
             <div class="form-row">
                 <div class="form-group">
                     <label for="name">Название *</label>
@@ -131,33 +112,43 @@ $images = product_images($productId);
                            value="<?= e($product['price']) ?>">
                 </div>
                 <div class="form-group form-group--small">
-                    <label for="stock">Кол-во на складе</label>
-                    <input type="number" id="stock" name="stock" min="0"
-                           value="<?= (int)$product['stock'] ?>">
-                </div>
-                <div class="form-group form-group--small form-group--checkbox">
-                    <label>
-                        <input type="checkbox" name="is_active"
-                               <?= $product['is_active'] ? 'checked' : '' ?>>
-                        Активен (виден покупателям)
-                    </label>
+                    <label>Размер</label>
+                    <select name="size">
+                        <?php
+                        $sizes = [
+                            'Одежда'    => ['XS','S','M','L','XL','XXL'],
+                            'Сумки'     => ['Большой','Средний','Маленький'],
+                            'Украшения' => ['Универсальный'],
+                        ];
+                        foreach ($sizes as $group => $opts): ?>
+                            <optgroup label="<?= $group ?>">
+                                <?php foreach ($opts as $s): ?>
+                                    <option <?= $product['size'] === $s ? 'selected' : '' ?>><?= $s ?></option>
+                                <?php endforeach; ?>
+                            </optgroup>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
             </div>
-
+            <div class="form-row">
+                <div class="form-group form-group--checkbox">
+                    <label><input type="checkbox" name="is_new" <?= !empty($product['is_new']) ? 'checked' : '' ?>> Новинка</label>
+                </div>
+                <div class="form-group form-group--checkbox">
+                    <label><input type="checkbox" name="is_top" <?= !empty($product['is_top']) ? 'checked' : '' ?>> Топ продаж</label>
+                </div>
+            </div>
             <div class="form-actions">
                 <button type="submit" class="btn btn--primary">Сохранить изменения</button>
             </div>
         </form>
     </section>
 
-    <!-- УПРАВЛЕНИЕ ФОТОГРАФИЯМИ -->
     <section class="admin-card">
         <h2>Фотографии товара</h2>
 
-        <!-- Загрузить новое фото -->
         <form method="post" action="/admin/product_edit.php?id=<?= $productId ?>"
               enctype="multipart/form-data" class="upload-form">
-            <?= csrf_field() ?>
             <input type="hidden" name="action" value="upload_image">
 
             <div class="form-row form-row--align-end">
@@ -176,33 +167,25 @@ $images = product_images($productId);
             </div>
         </form>
 
-        <!-- Галерея существующих фото -->
         <?php if (empty($images)): ?>
             <p class="empty-hint">Фотографий пока нет.</p>
         <?php else: ?>
         <div class="image-gallery">
             <?php foreach ($images as $img): ?>
                 <div class="image-card <?= $img['is_main'] ? 'image-card--main' : '' ?>">
-                    <img src="<?= UPLOAD_URL . e($img['filename']) ?>"
-                         alt="<?= e($product['name']) ?>">
-
-                    <?php if ($img['is_main']): ?>
-                        <span class="badge badge--main">Главное</span>
-                    <?php endif; ?>
-
+                    <img src="<?= product_img_url($img['filename']) ?>"
+                         alt="<?= e($product['name'], ENT_QUOTES, 'UTF-8') ?>">
+                    <?php if ($img['is_main']): ?><span class="badge badge--main">Главное</span><?php endif; ?>
                     <div class="image-card__actions">
                         <?php if (!$img['is_main']): ?>
                         <form method="post" action="/admin/product_edit.php?id=<?= $productId ?>">
-                            <?= csrf_field() ?>
                             <input type="hidden" name="action" value="set_main_image">
                             <input type="hidden" name="image_id" value="<?= (int)$img['id'] ?>">
                             <button type="submit" class="btn btn--xs btn--ghost">Сделать главным</button>
                         </form>
                         <?php endif; ?>
-
                         <form method="post" action="/admin/product_edit.php?id=<?= $productId ?>"
-                              onsubmit="return confirm('Удалить это фото?')">
-                            <?= csrf_field() ?>
+                              onsubmit="return confirm('Удалить фото?')">
                             <input type="hidden" name="action" value="delete_image">
                             <input type="hidden" name="image_id" value="<?= (int)$img['id'] ?>">
                             <button type="submit" class="btn btn--xs btn--danger">Удалить</button>

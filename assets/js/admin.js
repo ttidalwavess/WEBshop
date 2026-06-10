@@ -1,10 +1,10 @@
 // assets/js/admin.js — JS для панели администратора
 $(function () {
 
-    //Flash-сообщения
+    // ── Flash-сообщения ──────────────────────────────────────
     setTimeout(function () { $('.alert').fadeOut(400); }, 5000);
 
-    //Превью файла 
+    // ── Превью файла ─────────────────────────────────────────
     $('input[type="file"][accept*="image"]').on('change', function () {
         var file = this.files[0];
         if (!file) return;
@@ -17,7 +17,7 @@ $(function () {
         reader.readAsDataURL(file);
     });
 
-    // Подсветка строки при наведении 
+    // ── Подсветка строки при наведении ───────────────────────
     $('.admin-table tbody tr').on('mouseenter', function () {
         $(this).addClass('row--hover');
     }).on('mouseleave', function () {

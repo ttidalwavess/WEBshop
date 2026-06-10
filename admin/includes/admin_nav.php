@@ -30,8 +30,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     </nav>
     <div class="admin-sidebar__footer">
         <span><?= e($_SESSION['username'] ?? '') ?></span>
-        <form method="post" action="/logout.php" style="display:inline">
-            <?= csrf_field() ?>
+        <form method="post" action="/index.php" style="display:inline">
             <button type="submit" class="btn btn--sm btn--ghost">Выйти</button>
         </form>
     </div>

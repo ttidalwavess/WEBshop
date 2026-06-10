@@ -1,31 +1,46 @@
 <?php
-require_once __DIR__ . '/config/db.php';
-require_once __DIR__ . '/includes/security.php';
-require_once __DIR__ . '/includes/categories.php';
+define('ROOT', __DIR__);
+require_once ROOT . '/config/db.php';
+require_once ROOT . '/includes/security.php';
+require_once ROOT . '/includes/products.php';
 
 session_start_safe();
-$categories = categories_all();
-// ... HTML с <?= include header.php
-// 
-// ... foreach $categories -> карточка категории (ссылка на /catalog.php?slug=...) ?>
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-<head>
-    <meta charset="UTF-8">
-    <title>Main</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Golos+Text&display=swap" rel="stylesheet">
-</head>
-<body>
-<div class="all">
-    <div class="header">
-        <div class="logo">
-           <?php include __DIR__ . '/includes/header.php'; ?>
-        </div>
 
-        <div class="authorization">
-            <div class="menu" id="menu">
-            </div>
+$page_title  = 'LIGHT | Женская одежда';
+$newProducts = products_new(12);
+$topProducts = products_top(12);
+
+include ROOT . '/includes/header.php';
+?>
+
+<main>
+
+    <section class="hero-section">
+        <div class="hero-image">
+            <img src="/img/hero.jpg" alt="LIGHT — женская одежда">
         </div>
-    </div>
-</div>
+        <div class="hero-content">
+            <h1 class="hero-title">LIGHT</h1>
+            <p class="hero-brand-label">✦ Light Studio ✦</p>
+            <p class="hero-description">
+                Мы создаём одежду для женщин, которые ценят лёгкость и характер в каждой детали.
+            </p>
+            <ul class="hero-for-list">
+                <li>Новые коллекции каждый сезон</li>
+                <li>Доставка по всей России</li>
+                <li>Возврат в течение 14 дней</li>
+            </ul>
+        </div>
+    </section>
+
+    <div class="banner-placeholder" aria-hidden="true"></div>
+
+    <?php render_carousel('Новая коллекция', $newProducts); ?>
+
+    <div class="banner-placeholder" aria-hidden="true"></div>
+
+    <?php render_carousel('Топ продаж', $topProducts); ?>
+
+</main>
+
+<?php include ROOT . '/includes/footer.php'; ?>

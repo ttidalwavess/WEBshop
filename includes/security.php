@@ -4,8 +4,8 @@ function session_start_safe(): void {
         session_set_cookie_params([
             'lifetime' => 0,
             'path'     => '/',
-            'secure'   => false,   // поставь true если HTTPS
-            'httponly' => true,    // JS не читает куку сессии
+            'secure'   => false,   
+            'httponly' => true,    
             'samesite' => 'Strict',
         ]);
         session_start();

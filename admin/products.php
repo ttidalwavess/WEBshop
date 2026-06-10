@@ -1,31 +1,29 @@
 <?php
-
-require_once __DIR__ . '/../config/db.php';
-require_once __DIR__ . '/../includes/security.php';
-require_once __DIR__ . '/../includes/products.php';
-require_once __DIR__ . '/../includes/categories.php';
+define('ROOT', dirname(__DIR__));
+require_once ROOT . '/config/db.php';
+require_once ROOT . '/includes/security.php';
+require_once ROOT . '/includes/products.php';
+require_once ROOT . '/includes/categories.php';
 
 session_start_safe();
 require_admin();
 
 $message = '';
 $error   = '';
-$editProduct = null;
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    csrf_verify();
-
     $action = input_str('action');
-    $id     = input_int('id');
+    $id = input_int('id');
 
     if ($action === 'create') {
         $result = product_create([
-            'name'        => input_str('name'),
+            'name' => input_str('name'),
             'category_id' => input_int('category_id'),
             'description' => input_str('description'),
-            'price'       => input_float('price'),
-            'stock'       => input_int('stock'),
+            'price' => input_float('price'),
+            'size' => input_str('size'),
+            'is_top' => isset($_POST['is_top']),
+            'is_new' => isset($_POST['is_new']),
         ]);
         if (isset($result['error'])) {
             $error = $result['error'];
@@ -38,12 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($action === 'delete') {
-        $result = product_delete($id);
-        if (isset($result['error'])) {
-            $error = $result['error'];
-        } else {
-            $message = 'Товар удалён.';
-        }
+        $result  = product_delete($id);
+        $error   = $result['error'] ?? '';
+        $message = $error ? '' : 'Товар удалён.';
     }
 }
 
@@ -67,18 +62,12 @@ $categories = categories_all();
         <h1>Товары</h1>
     </div>
 
-    <?php if ($message): ?>
-        <div class="alert alert--success"><?= $message ?></div>
-    <?php endif; ?>
-    <?php if ($error): ?>
-        <div class="alert alert--error"><?= e($error) ?></div>
-    <?php endif; ?>
+    <?php if ($message): ?><div class="alert alert--success"><?= $message ?></div><?php endif; ?>
+    <?php if ($error):   ?><div class="alert alert--error"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></div><?php endif; ?>
 
-    <!-- ФОРМА ДОБАВЛЕНИЯ ТОВАРА -->
     <section class="admin-card">
         <h2>Добавить товар</h2>
         <form method="post" action="/admin/products.php" enctype="multipart/form-data">
-            <?= csrf_field() ?>
             <input type="hidden" name="action" value="create">
 
             <div class="form-row">
@@ -97,34 +86,49 @@ $categories = categories_all();
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="description">Описание</label>
-                <textarea id="description" name="description" rows="4"></textarea>
+           <div class="form-group">
+                <label>Описание</label>
+                <textarea name="description" rows="3"></textarea>
             </div>
-
             <div class="form-row">
                 <div class="form-group form-group--small">
-                    <label for="price">Цена (₽) *</label>
-                    <input type="number" id="price" name="price" required min="0" step="0.01">
+                    <label>Цена (₽) *</label>
+                    <input type="number" name="price" required min="0" step="0.01">
                 </div>
                 <div class="form-group form-group--small">
-                    <label for="stock">Кол-во на складе</label>
-                    <input type="number" id="stock" name="stock" min="0" value="0">
+                    <label>Размер</label>
+                    <select name="size">
+                        <optgroup label="Одежда">
+                            <option>XS</option><option>S</option><option>M</option>
+                            <option>L</option><option>XL</option><option>XXL</option>
+                        </optgroup>
+                        <optgroup label="Сумки">
+                            <option>Большой</option><option>Средний</option><option>Маленький</option>
+                        </optgroup>
+                        <optgroup label="Украшения">
+                            <option selected>Универсальный</option>
+                        </optgroup>
+                    </select>
                 </div>
             </div>
-
-            <div class="form-group">
-                <label for="main_image">Главное фото (JPEG/PNG/WebP, до 5 МБ)</label>
-                <input type="file" id="main_image" name="main_image" accept="image/*">
+            <div class="form-row">
+                <div class="form-group form-group--checkbox">
+                    <label><input type="checkbox" name="is_new"> Новинка</label>
+                </div>
+                <div class="form-group form-group--checkbox">
+                    <label><input type="checkbox" name="is_top"> Топ продаж</label>
+                </div>
             </div>
-
+            <div class="form-group">
+                <label>Главное фото (JPEG/PNG/WebP, до 5 МБ)</label>
+                <input type="file" name="main_image" accept="image/*">
+            </div>
             <div class="form-actions">
                 <button type="submit" class="btn btn--primary">Создать товар</button>
             </div>
         </form>
     </section>
 
-    <!-- СПИСОК ТОВАРОВ -->
     <section class="admin-card">
         <h2>Все товары (<?= count($products) ?>)</h2>
         <?php if (empty($products)): ?>
@@ -132,41 +136,31 @@ $categories = categories_all();
         <?php else: ?>
         <table class="admin-table">
             <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Фото</th>
-                    <th>Название</th>
-                    <th>Категория</th>
-                    <th>Цена</th>
-                    <th>Склад</th>
-                    <th>Активен</th>
-                    <th>Действия</th>
-                </tr>
+                <tr><th>#</th><th>Фото</th><th>Название</th><th>Категория</th>
+                    <th>Размер</th><th>Цена</th><th>New</th><th>Top</th><th>Действия</th></tr>
             </thead>
             <tbody>
             <?php foreach ($products as $p): ?>
-                <tr class="<?= $p['is_active'] ? '' : 'row--inactive' ?>">
+                <tr class="row--inactive">
                     <td><?= (int)$p['id'] ?></td>
                     <td>
                         <?php if ($p['main_image']): ?>
-                            <img src="<?= UPLOAD_URL . e($p['main_image']) ?>"
-                                 alt="" class="thumb">
+                            <img src="<?= product_img_url($p['main_image']) ?>" alt="" class="thumb">
                         <?php else: ?>
                             <span class="no-photo">—</span>
                         <?php endif; ?>
                     </td>
                     <td><?= e($p['name']) ?></td>
                     <td><?= e($p['category_name']) ?></td>
+                    <td><?= e($p['size']) ?></td>
                     <td><?= number_format($p['price'], 2, '.', ' ') ?> ₽</td>
-                    <td><?= (int)$p['stock'] ?></td>
-                    <td><?= $p['is_active'] ? '✓' : '✗' ?></td>
+                    <td><?= $p['is_new'] ? '✨' : '—' ?></td>
+                    <td><?= $p['is_top'] ? '🔥' : '—' ?></td>
                     <td class="actions">
                         <a href="/admin/product_edit.php?id=<?= (int)$p['id'] ?>"
                            class="btn btn--sm btn--ghost">Изменить</a>
-
                         <form method="post" action="/admin/products.php"
                               onsubmit="return confirm('Удалить «<?= e($p['name']) ?>»? Это нельзя отменить.')">
-                            <?= csrf_field() ?>
                             <input type="hidden" name="action" value="delete">
                             <input type="hidden" name="id" value="<?= (int)$p['id'] ?>">
                             <button type="submit" class="btn btn--sm btn--danger">Удалить</button>
