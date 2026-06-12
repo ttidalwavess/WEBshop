@@ -22,13 +22,11 @@ include ROOT . '/includes/header.php';
         <div class="hero-content">
             <h1 class="hero-title">LIGHT</h1>
             <p class="hero-brand-label">✦ Light Studio ✦</p>
-            <p class="hero-description">
-                Мы создаём одежду для женщин, которые ценят лёгкость и характер в каждой детали.
-            </p>
+            <p class="hero-description">Мы создаем одежду для женщин, которые ценят легкость, качество и современную эстетику. Каждая деталь в наших коллекциях рождается из любви к красоте.</p>
             <ul class="hero-for-list">
-                <li>Для воздушных образов и свободы</li>
-                <li>Новые коллекции каждый сезон</li>
-                <li>Доставка по всей России</li>
+                <li>Комфорт в каждом движении</li>
+                <li>Качество вместо трендов</li>
+                <li>Свобода быть собой</li>
             </ul>
         </div>
     </section>

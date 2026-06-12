@@ -103,7 +103,7 @@ function products_top(int $limit = 12): array
     return $stmt->fetchAll();
 }
 
-function product_by_id(int $id) 
+function product_by_id(int $id)
 {
     $stmt = db()->prepare(
         'SELECT p.*, c.name AS category_name, c.slug AS category_slug
@@ -117,7 +117,7 @@ function product_by_id(int $id)
     return $row;
 }
 
-function product_by_slug(string $slug) 
+function product_by_slug(string $slug)
 {
     $stmt = db()->prepare(
         'SELECT p.*, c.name AS category_name, c.slug AS category_slug
@@ -185,20 +185,18 @@ function products_all(int $limit = 50, int $offset = 0): array
 
 /**
  * Выводит HTML одной карточки товара.
- * Используется на index.php и catalog.php — один код, не копипаст.
- *
- * $p — строка из products_new(), products_top(), products_by_nav() и т.д.
- * Ожидает поля: id, name, price, category_name, main_image, is_new, is_top.
+ * $from — параметр для хлебных крошек, например 'from_cat=new' или 'from_slug=platya'
  */
-function render_product_card(array $p): void
+function render_product_card(array $p, string $from = ''): void
 {
-    $id = (int)$p['id'];
-    $name = e($p['name']);
-    $category = e($p['category_name']);
-    $price = number_format((float)$p['price'], 0, '.', ' ');
-    $imgSrc = product_img_url($p['main_image'] ?? '');
+    $id        = (int)$p['id'];
+    $fromParam = $from !== '' ? '&' . $from : '';
+    $name      = e($p['name']);
+    $category  = e($p['category_name']);
+    $price     = number_format((float)$p['price'], 0, '.', ' ');
+    $imgSrc    = product_img_url($p['main_image'] ?? '');
     ?>
-    <a href="/product.php?id=<?= $id ?>" class="product-card">
+    <a href="/product.php?id=<?= $id ?><?= $fromParam ?>" class="product-card">
         <div class="product-img">
             <img src="<?= $imgSrc ?>" alt="<?= $name ?>" loading="lazy">
         </div>
@@ -216,11 +214,10 @@ function render_product_card(array $p): void
 }
 
 /**
- * Выводит блок карусели с любым массивом товаров.
- * $title — заголовок секции.
- * $products — результат products_new(), products_top() и т.д.
+ * Выводит блок карусели.
+ * $from — передаётся в каждую карточку для хлебных крошек.
  */
-function render_carousel(string $title, array $products): void
+function render_carousel(string $title, array $products, string $from = ''): void
 {
     ?>
     <section class="products-section">
@@ -237,7 +234,7 @@ function render_carousel(string $title, array $products): void
                     <?php if (empty($products)): ?>
                         <p style="padding:2rem;opacity:0.5">Товары появятся совсем скоро</p>
                     <?php else: ?>
-                        <?php foreach ($products as $p): render_product_card($p); endforeach; ?>
+                        <?php foreach ($products as $p): render_product_card($p, $from); endforeach; ?>
                     <?php endif; ?>
                 </div>
             </div>
@@ -252,17 +249,16 @@ function render_carousel(string $title, array $products): void
     <?php
 }
 
-
 function product_create(array $data): array
 {
     require_admin();
-    $name = mb_substr(trim($data['name'] ?? ''), 0, 200);
+    $name       = mb_substr(trim($data['name'] ?? ''), 0, 200);
     $categoryId = (int)($data['category_id'] ?? 0);
-    $desc = trim($data['description'] ?? '');
-    $price = max(0.0, (float)($data['price'] ?? 0));
-    $size = mb_substr(trim($data['size'] ?? 'Универсальный'), 0, 50);
-    $isTop = isset($data['is_top']) ? 1 : 0;
-    $isNew = isset($data['is_new']) ? 1 : 0;
+    $desc       = trim($data['description'] ?? '');
+    $price      = max(0.0, (float)($data['price'] ?? 0));
+    $size       = mb_substr(trim($data['size'] ?? 'Универсальный'), 0, 50);
+    $isTop      = isset($data['is_top']) ? 1 : 0;
+    $isNew      = isset($data['is_new']) ? 1 : 0;
 
     if ($name === '') return ['error' => 'Название товара обязательно.'];
 
@@ -282,13 +278,13 @@ function product_create(array $data): array
 function product_update(int $id, array $data): array
 {
     require_admin();
-    $name = mb_substr(trim($data['name'] ?? ''), 0, 200);
+    $name       = mb_substr(trim($data['name'] ?? ''), 0, 200);
     $categoryId = (int)($data['category_id'] ?? 0);
-    $desc = trim($data['description'] ?? '');
-    $price = max(0.0, (float)($data['price'] ?? 0));
-    $size = mb_substr(trim($data['size'] ?? 'Универсальный'), 0, 50);
-    $isTop = (int)($data['is_top'] ?? 0);
-    $isNew = (int)($data['is_new'] ?? 0);
+    $desc       = trim($data['description'] ?? '');
+    $price      = max(0.0, (float)($data['price'] ?? 0));
+    $size       = mb_substr(trim($data['size'] ?? 'Универсальный'), 0, 50);
+    $isTop      = (int)($data['is_top'] ?? 0);
+    $isNew      = (int)($data['is_new'] ?? 0);
 
     if ($name === '') return ['error' => 'Название товара обязательно.'];
 
@@ -338,11 +334,11 @@ function product_image_upload(int $productId, string $fieldName, bool $isMain = 
         return ['error' => 'Допустимые форматы: JPEG, PNG, WebP, GIF.'];
     }
 
-    switch ($mimeType) { // match() — только PHP 8.0, используем switch
+    switch ($mimeType) {
         case 'image/jpeg': $ext = 'jpg';  break;
-        case 'image/png': $ext = 'png';  break;
+        case 'image/png':  $ext = 'png';  break;
         case 'image/webp': $ext = 'webp'; break;
-        default: $ext = 'gif';  break;
+        default:           $ext = 'gif';  break;
     }
 
     $filename = uniqid('img_', true) . '.' . $ext;

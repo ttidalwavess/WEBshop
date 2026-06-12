@@ -31,9 +31,11 @@ if ($slug !== '') {
     }
     $title    = $category['name'];
     $products = products_by_category((int)$category['id']);
+    $from     = 'from_slug=' . urlencode($slug);
 } else {
     $title    = $navTitles[$cat] ?? 'Каталог';
     $products = products_by_nav($cat);
+    $from     = 'from_cat=' . urlencode($cat);
 }
 
 $page_title = 'LIGHT | ' . $title;
@@ -65,7 +67,7 @@ include ROOT . '/includes/header.php';
             <p class="catalog-empty">Товары появятся совсем скоро.</p>
         <?php else: ?>
             <div class="catalog-grid">
-                <?php foreach ($products as $p): render_product_card($p); endforeach; ?>
+                <?php foreach ($products as $p): render_product_card($p, $from); endforeach; ?>
             </div>
         <?php endif; ?>
 

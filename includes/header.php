@@ -18,7 +18,6 @@ $callent_sale = isset($_GET['sale']);
 <html lang="ru" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="user-logged-in" content="<?= is_logged_in() ? '1' : '0' ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title><?= e($page_title ?? 'LIGHT | Женская одежда') ?></title>
     <link rel="stylesheet" href="/assets/css/style.css">
@@ -54,9 +53,7 @@ $callent_sale = isset($_GET['sale']);
         </a>
     </nav>
 
-    <div class="header-icons">
-
-        <!-- Заказы -->
+        <div class="header-icons">
         <?php $orders_href = is_logged_in() ? '/orders.php' : '/login_required.php'; ?>
         <a href="<?= $orders_href ?>" class="icon-btn" aria-label="Мои заказы">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -106,4 +103,6 @@ $callent_sale = isset($_GET['sale']);
             </a>
         <?php endif; ?>
     </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Меню"><span></span><span></span><span></span></button>
 </header>
+</body>

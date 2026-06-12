@@ -6,13 +6,11 @@ $(function () {
 
     // ── Добавление в корзину ─────────────────────────────────
     $(document).on('click', '.btn-add-to-cart', function () {
-        if ($('meta[name="user-logged-in"]').attr('content') !== '1') {
-        showLoginModal();
-        return;
-        }
         var $btn        = $(this);
         var productId   = $btn.data('id');
         var productName = $btn.data('name');
+
+        $btn.prop('disabled', true).text('Добавляем...');
 
         $.ajax({
             url:      '/api/cart_add.php', // этот файл создаёт Роль 2
@@ -59,41 +57,26 @@ $(function () {
 
 });
 
-function showLoginModal() {
-    // Удаляем старое если есть
-    $('#login-modal').remove();
 
-    $('body').append(`
-        <div id="login-modal" style="
-            position:fixed;inset:0;background:rgba(0,0,0,0.4);
-            z-index:1000;display:flex;align-items:center;justify-content:center">
-            <div style="
-                background:#fff;border-radius:16px;padding:2.5rem 2rem;
-                max-width:360px;width:90%;text-align:center;font-family:Montserrat,sans-serif">
-                <p style="font-size:1.1rem;font-weight:700;margin-bottom:0.8rem;color:#1A1A1A">
-                    Вы не вошли в аккаунт
-                </p>
-                <p style="font-size:0.88rem;color:#1A1A1A;opacity:0.6;margin-bottom:1.8rem;line-height:1.5">
-                    Войдите, чтобы добавлять товары в корзину
-                </p>
-                <a href="/login.php" style="
-                    display:block;padding:14px;background:#330000;color:#E7F0F7;
-                    border-radius:8px;font-weight:700;font-size:0.85rem;
-                    letter-spacing:1px;text-transform:uppercase;text-decoration:none;
-                    margin-bottom:0.8rem">
-                    Войти
-                </a>
-                <button onclick="$('#login-modal').remove()" style="
-                    background:none;border:none;font-size:0.85rem;
-                    color:#1A1A1A;opacity:0.5;cursor:pointer;font-family:Montserrat,sans-serif">
-                    Закрыть
-                </button>
-            </div>
-        </div>
-    `);
+// ---- Бургер-меню ----
+$(document).on('click', '#navToggle', function () {
+    $('.nav-center').toggleClass('open');
+    $('.header-icons').toggleClass('open');
+    $(this).toggleClass('open');
+});
 
-    // Закрытие по клику на фон
-    $('#login-modal').on('click', function(e) {
-        if ($(e.target).is('#login-modal')) $(this).remove();
-    });
-}
+// Закрываем при клике на ссылку или иконку
+$(document).on('click', '.nav-center .nav-link, .header-icons .icon-btn', function () {
+    $('.nav-center').removeClass('open');
+    $('.header-icons').removeClass('open');
+    $('#navToggle').removeClass('open');
+});
+
+// Закрываем при клике вне меню
+$(document).on('click', function (e) {
+    if (!$(e.target).closest('.nav-center, .header-icons, #navToggle').length) {
+        $('.nav-center').removeClass('open');
+        $('.header-icons').removeClass('open');
+        $('#navToggle').removeClass('open');
+    }
+});

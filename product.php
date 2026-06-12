@@ -21,11 +21,48 @@ if (!$product) {
 }
 
 $mainImgSrc = product_img_url(product_main_image($id));
-$allImgs = product_image_filenames($id); // ['img_abc.jpg', 'img_def.png', ...]
+$allImgs = product_image_filenames($id);
 
 $clothSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 $bagSizes   = ['Большой', 'Средний', 'Маленький'];
 $curSize    = $product['size'] ?? '';
+
+// ── Хлебные крошки ──
+// ── Хлебные крошки ──
+$from_cat  = input_str('from_cat',  $_GET);
+$from_slug = input_str('from_slug', $_GET);
+
+$navTitles = [
+    'new'         => 'Новинки',
+    'women'       => 'Одежда',
+    'accessories' => 'Аксессуары',
+];
+
+// Определяем раздел по slug категории товара если from не передан
+$accessorySlugs = ['sumki', 'ukrasheniya'];
+
+if ($from_slug !== '') {
+    $from_url   = '/catalog.php?slug=' . urlencode($from_slug);
+    $from_label = htmlspecialchars(
+        category_by_slug($from_slug)['name'] ?? $from_slug,
+        ENT_QUOTES, 'UTF-8'
+    );
+} elseif ($from_cat !== '') {
+    $from_url   = '/catalog.php?cat=' . urlencode($from_cat);
+    $from_label = htmlspecialchars($navTitles[$from_cat], ENT_QUOTES, 'UTF-8');
+} else {
+    // Fallback — определяем по категории самого товара
+    $cat_slug = $product['category_slug'] ?? '';
+    if (in_array($cat_slug, $accessorySlugs, true)) {
+        $from_url   = '/catalog.php?cat=accessories';
+        $from_label = 'Аксессуары';
+    } else {
+        $from_url   = '/catalog.php?cat=women';
+        $from_label = 'Одежда';
+    }
+}
+
+$category_label = htmlspecialchars($product['category_name'] ?? '', ENT_QUOTES, 'UTF-8');
 
 $page_title = 'LIGHT | ' . $product['name'];
 $extra_js   = ['/js/product.js'];
@@ -38,11 +75,9 @@ include ROOT . '/includes/header.php';
     <nav class="breadcrumb">
         <a href="/index.php">Главная</a>
         <span>/</span>
-        <a href="/catalog.php">Каталог</a>
+        <a href="<?= $from_url ?>"><?= $from_label ?></a>
         <span>/</span>
-        <a href="/catalog.php?slug=<?= htmlspecialchars($product['category_slug'], ENT_QUOTES, 'UTF-8') ?>">
-            <?= htmlspecialchars($product['category_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>
-        </a>
+        <span><?= $category_label ?></span>
     </nav>
 
     <div class="product-layout">
@@ -123,10 +158,12 @@ include ROOT . '/includes/header.php';
                 </div>
                 <div class="accordion-item">
                     <button class="accordion-trigger">
-                        доставка и возврат <span class="accordion-icon">+</span>
+                        уход за товаром<span class="accordion-icon">+</span>
                     </button>
                     <div class="accordion-body">
-                        <p>Доставка по России от 3 до 7 рабочих дней. Возврат в течение 14 дней.</p>
+                        <p>Чтобы изделие радовало вас как можно дольше, соблюдайте базовые правила ухода:
+                            берегите его от прямых солнечных лучей и источников тепла,
+                            избегайте контакта с агрессивными жидкостями и парфюмом.</p>
                     </div>
                 </div>
             </div>
