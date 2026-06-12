@@ -96,7 +96,7 @@ include ROOT . '/includes/header.php';
                         <h2 class="checkout-section__title">Данные получателя</h2>
                         
                         <div class="checkout-field">
-                            <label for="name">Имя и фамилия *</label>
+                            <label for="name">Имя и фамилия</label>
                             <input type="text" id="name" name="name"
                                    placeholder="Иванова Анна"
                                    value="<?= e($_POST['name'] ?? '') ?>"
@@ -104,7 +104,7 @@ include ROOT . '/includes/header.php';
                         </div>
                         
                         <div class="checkout-field">
-                            <label for="phone">Телефон *</label>
+                            <label for="phone">Телефон</label>
                             <input type="tel" id="phone" name="phone"
                                    placeholder="+7 (900) 000-00-00"
                                    value="<?= e($_POST['phone'] ?? '') ?>"
@@ -116,13 +116,13 @@ include ROOT . '/includes/header.php';
                         <h2 class="checkout-section__title">Самовывоз</h2>
                         <div class="checkout-info-block">
                             <div class="checkout-info-block__row">
-                                <span>📍 Владивосток, ул. Аллилуева, 12А</span>
+                                <span>Владивосток, ул. Аллилуева, 12А</span>
                             </div>
                             <div class="checkout-info-block__row">
-                                <span>💰 Оплата в магазине при получении</span>
+                                <span>Оплата в магазине при получении</span>
                             </div>
                             <div class="checkout-info-block__row checkout-info-block__row--accent">
-                                <span>⏱ Заказ будет готов в течение часа</span>
+                                <span>Заказ будет готов в течение часа</span>
                             </div>
                         </div>
                     </div>
