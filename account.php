@@ -4,7 +4,7 @@ require_once ROOT . '/config/db.php';
 require_once ROOT . '/includes/security.php';
 
 session_start_safe();
-require_login('/login.php');
+require_login('authorization/login.php');
 
 // Получаем данные пользователя из БД
 $pdo  = db();
