@@ -136,13 +136,12 @@ $categories = categories_all();
         <?php else: ?>
         <table class="admin-table">
             <thead>
-                <tr><th>#</th><th>Фото</th><th>Название</th><th>Категория</th>
+                <tr><th>Фото</th><th>Название</th><th>Категория</th>
                     <th>Размер</th><th>Цена</th><th>New</th><th>Top</th><th>Действия</th></tr>
             </thead>
             <tbody>
             <?php foreach ($products as $p): ?>
                 <tr class="row--inactive">
-                    <td><?= (int)$p['id'] ?></td>
                     <td>
                         <?php if ($p['main_image']): ?>
                             <img src="<?= product_img_url($p['main_image']) ?>" alt="" class="thumb">

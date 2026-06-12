@@ -14,9 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = input_int('id');
 
     if ($action === 'create' || $action === 'update') {
-        $result = ($action === 'create')
-            ? category_create(input_str('name'), input_int('sort_order'))
-            : category_update($id, input_str('name'), input_int('sort_order'));
+        if ($result = ($action === 'create')) {
+            category_create(input_str('name'), input_int('sort_order'));
+        } else {
+            category_update($id, input_str('name'), input_int('sort_order'));
+        }
         $error   = $result['error'] ?? '';
         $message = $error ? '' : ($action === 'create' ? 'Категория создана.' : 'Категория обновлена.');
     }
@@ -63,6 +65,7 @@ $editCategory = isset($_GET['edit']) ? category_by_id((int)$_GET['edit']) : null
                 <input type="text" id="name" name="name" required maxlength="100"
                        value="<?= e($editCategory['name'] ?? '') ?>">
             </div>
+            
             <div class="form-group form-group--small">
                 <label for="sort_order">Порядок сортировки</label>
                 <input type="number" id="sort_order" name="sort_order" min="0"
@@ -81,11 +84,10 @@ $editCategory = isset($_GET['edit']) ? category_by_id((int)$_GET['edit']) : null
             <p class="empty-hint">Категорий пока нет.</p>
         <?php else: ?>
         <table class="admin-table">
-            <thead><tr><th>#</th><th>Название</th><th>Slug</th><th>Порядок</th><th>Действия</th></tr></thead>
+            <thead><tr><th>Название</th><th>Slug</th><th>Порядок</th><th>Действия</th></tr></thead>
             <tbody>
             <?php foreach ($categories as $cat): ?>
                 <tr>
-                    <td><?= (int)$cat['id'] ?></td>
                     <td><?= e($cat['name']) ?></td>
                     <td><code><?= e($cat['slug']) ?></code></td>
                     <td><?= (int)$cat['sort_order'] ?></td>
