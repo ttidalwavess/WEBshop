@@ -23,8 +23,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
            class="admin-nav__item <?= in_array($currentPage, ['products.php','product_edit.php']) ? 'admin-nav__item--active' : '' ?>">
             📦 Товары
         </a>
-        <a href="/admin/orders.php"
-           class="admin-nav__item <?= $currentPage === 'orders.php' ? 'admin-nav__item--active' : '' ?>">
+        <a href="/admin/admin_orders.php"
+           class="admin-nav__item <?= $currentPage === 'admin_orders.php' ? 'admin-nav__item--active' : '' ?>">
             🛒 Заказы (live)
         </a>
     </nav>

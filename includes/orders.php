@@ -138,7 +138,7 @@ function order_update_status(int $order_id, int $status_id): bool
 }
 
 /**
- * Получить все заказы (для админки)
+ * Получить  (для админки)
  */
 function order_get_all(int $limit = 100): array
 {

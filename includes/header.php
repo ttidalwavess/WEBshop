@@ -1,5 +1,7 @@
 <?php
 if (!defined('ROOT')) die('Direct access forbidden');
+
+require_once ROOT . '/config/db.php';
 require_once ROOT . '/includes/security.php';
 
 $cart_count = 0;

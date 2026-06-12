@@ -2,6 +2,7 @@
 define('ROOT', dirname(__DIR__));
 require_once ROOT . '/config/db.php';
 require_once ROOT . '/includes/security.php';
+require_once ROOT . '/includes/orders.php';
 
 session_start_safe();
 require_admin();
@@ -106,7 +107,6 @@ function renderOrders(orders) {
         var badge  = STATUS_COLORS[o.status]  || 'badge--secondary';
         var label  = STATUS_LABELS[o.status]  || o.status;
 
-        // Дропдаун статусов
         var select = '<select class="order-status-select" data-order-id="' + o.id + '">';
         $.each(STATUSES, function(j, s) {
             select += '<option value="' + s.id + '"'
@@ -150,7 +150,6 @@ function loadOrders() {
     });
 }
 
-// Смена статуса
 $(document).on('change', '.order-status-select', function() {
     var $sel     = $(this);
     var orderId  = $sel.data('order-id');
@@ -165,7 +164,6 @@ $(document).on('change', '.order-status-select', function() {
         data: { order_id: orderId, status_id: statusId },
         success: function(res) {
             if (res.success) {
-                // Обновляем бейдж в строке без перезагрузки всей таблицы
                 var $row   = $('#order-row-' + orderId);
                 var badge  = STATUS_COLORS[res.status_name]  || 'badge--secondary';
                 var label  = STATUS_LABELS[res.status_name]  || res.status_name;

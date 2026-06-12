@@ -75,14 +75,14 @@ $statusLabels = ['pending'=>'Ожидает','processing'=>'Обрабатыва
                 <div class="stat-card__value"><?= $stats['orders_today'] ?></div>
                 <div class="stat-card__label">Заказов сегодня <small>(всего: <?= $stats['orders_total'] ?>)</small></div>
             </div>
-            <a href="/admin/orders.php" class="stat-card__link">Live-заказы →</a>
+            <a href="/admin/admin_orders.php" class="stat-card__link">Live-заказы →</a>
         </div>
     </div>
 
     <section class="admin-card">
         <div class="admin-card__header">
             <h2>Последние заказы</h2>
-            <a href="/admin/orders.php" class="btn btn--sm btn--ghost">Все заказы</a>
+            <a href="/admin/admin_orders.php" class="btn btn--sm btn--ghost">Все заказы</a>
         </div>
         <?php if (empty($recentOrders)): ?>
             <p class="empty-hint">Заказов пока нет.</p>
@@ -112,7 +112,6 @@ $statusLabels = ['pending'=>'Ожидает','processing'=>'Обрабатыва
         <div class="quick-actions">
             <a href="/admin/categories.php" class="btn btn--secondary">➕ Новая категория</a>
             <a href="/admin/products.php"   class="btn btn--secondary">➕ Новый товар</a>
-            <a href="/admin/orders.php"     class="btn btn--secondary">📋 Заказы (live)</a>
             <a href="/" target="_blank"     class="btn btn--ghost">🌐 Открыть сайт</a>
         </div>
     </section>
