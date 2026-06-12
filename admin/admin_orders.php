@@ -25,6 +25,16 @@ $statusColors = [
     'delivered'  => 'badge--success',
     'cancelled'  => 'badge--danger',
 ];
+
+$statuses = order_get_statuses();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id'], $_POST['status_id'])) {
+    order_update_status((int)$_POST['order_id'], (int)$_POST['status_id']);
+    header('Location: /admin/orders.php');
+    exit;
+}
+
+$orders = order_get_all();
 ?>
 <!DOCTYPE html>
 <html lang="ru">

@@ -10,8 +10,8 @@ if (!is_logged_in()) { header('Location: /login_required.php'); exit; }
 $pdo = db();
 
 $stmt = $pdo->prepare("
-    SELECT c.id AS cart_id, c.quantity, c.product_id,
-           p.name, p.price, p.size,
+    SELECT c.id AS cart_id, c.quantity, c.product_id, c.size,
+           p.name, p.price,
            pi.filename AS img
     FROM cart c
     JOIN products p ON p.id = c.product_id
@@ -21,17 +21,6 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$_SESSION['user_id']]);
 $items = $stmt->fetchAll();
-
-// -------------------------------------------------------
-// ЗАГЛУШКА — удалить когда корзина заработает через AJAX
-
-$items = [
-    ['cart_id'=>1, 'quantity'=>1, 'product_id'=>1,
-    'name'=>'Платье красное', 'price'=>4990, 'size'=>'S', 'img'=>'dress_red.png'],
-    ['cart_id'=>2, 'quantity'=>2, 'product_id'=>3,
-    'name'=>'Платье браун', 'price'=>6200, 'size'=>'M', 'img'=>'dress_brown.png'],
-];
-// -------------------------------------------------------
 
 $total = 0;
 foreach ($items as $item) {
@@ -154,67 +143,87 @@ include ROOT . '/includes/header.php';
 $(function () {
 
     $(document).on('click', '.qty-plus, .qty-minus', function () {
-        var $btn    = $(this);
-        var cartId  = $btn.data('cart-id');
-        var $item   = $btn.closest('.cart-item');
-        var $qty    = $item.find('.qty-value');
+        var $btn = $(this);
+        var cartId = $btn.data('cart-id');
+        var $item = $btn.closest('.cart-item');
+        var $qty = $item.find('.qty-value');
         var current = parseInt($qty.text());
-        var newQty  = Math.max(1, current + ($btn.hasClass('qty-plus') ? 1 : -1));
-
+        var newQty = Math.max(1, current + ($btn.hasClass('qty-plus') ? 1 : -1));
+        
+        // Блокируем кнопки на время запроса
+        $('.qty-btn').prop('disabled', true);
+        
         $.ajax({
-            url: '/api/cart_update.php',
+            url: '/api/cart/update.php',
             method: 'POST',
             dataType: 'json',
             data: { cart_id: cartId, qty: newQty },
             success: function (res) {
                 if (res.success) {
-                    updateItem($item, cartId, newQty, parseFloat($item.data('price')));
+                    // Обновляем количество в строке
+                    $item.find('.qty-value').text(res.new_quantity);
+                    
+                    // Обновляем цену строки
+                    var newPrice = res.price * res.new_quantity;
+                    $item.find('.cart-item__price').text('₽ ' + fmt(newPrice));
+                    
+                    // Обновляем сумму в итого
+                    recalc();
+                    
+                    // Обновляем бейдж корзины
                     updateCartBadge(res.cart_count);
+                } else {
+                    alert(res.error || 'Ошибка при обновлении');
                 }
+                $('.qty-btn').prop('disabled', false);
             },
-            error: function () {
-                // заглушка до готовности API
-                updateItem($item, cartId, newQty, parseFloat($item.data('price')));
+            error: function(xhr) {
+                console.error('Ошибка:', xhr.responseText);
+                alert('Ошибка при обновлении количества');
+                $('.qty-btn').prop('disabled', false);
             }
         });
     });
 
     $(document).on('click', '.cart-item__remove', function () {
         var cartId = $(this).data('cart-id');
-        var $item  = $(this).closest('.cart-item');
-
+        var $item = $(this).closest('.cart-item');
+        
+        if (!confirm('Удалить товар из корзины?')) return;
+        
         $.ajax({
-            url: '/api/cart_remove.php',
+            url: '/api/cart/remove.php',
             method: 'POST',
             dataType: 'json',
             data: { cart_id: cartId },
             success: function (res) {
                 if (res.success) {
-                    removeItem($item, cartId);
-                    updateCartBadge(res.cart_count);
+                    $item.fadeOut(300, function() {
+                        $(this).remove();
+                        recalc();
+                        updateCount();
+                        updateCartBadge(res.cart_count);
+                    });
+                } else {
+                    alert(res.error || 'Ошибка при удалении');
                 }
             },
-            error: function () { removeItem($item, cartId); }
+            error: function(xhr) {
+                console.error('Ошибка:', xhr.responseText);
+                alert('Ошибка при удалении товара');
+            }
         });
     });
-
-    function updateItem($item, cartId, qty, price) {
-        $item.find('.qty-value').text(qty);
-        $item.find('.cart-item__price').text('₽ ' + fmt(price * qty));
-        $('[data-cart-id="' + cartId + '"].cart-summary__item .cart-summary__item-price')
-            .text('₽ ' + fmt(price * qty));
-        recalc();
-    }
-
-    function removeItem($item, cartId) {
-        $item.fadeOut(300, function () { $(this).remove(); recalc(); updateCount(); });
-        $('[data-cart-id="' + cartId + '"].cart-summary__item').remove();
-    }
 
     function recalc() {
         var total = 0;
         $('.cart-item').each(function () {
-            total += parseFloat($(this).data('price')) * parseInt($(this).find('.qty-value').text());
+            var $item = $(this);
+            var priceText = $item.find('.cart-item__price').text();
+            var price = parseFloat(priceText.replace('₽', '').replace(/\s/g, ''));
+            if (!isNaN(price)) {
+                total += price;
+            }
         });
         $('#summary-total, #summary-final').text('₽ ' + fmt(total));
     }
@@ -222,11 +231,17 @@ $(function () {
     function updateCount() {
         var n = $('.cart-item').length;
         $('.cart-title__count').text('(' + n + ')');
-        if (n === 0) setTimeout(function(){ location.reload(); }, 400);
+        if (n === 0) {
+            setTimeout(function(){ location.reload(); }, 400);
+        }
     }
 
     function updateCartBadge(count) {
-        count > 0 ? $('#cart-count').text(count).show() : $('#cart-count').hide();
+        if (count > 0) {
+            $('#cart-count').text(count).show();
+        } else {
+            $('#cart-count').hide();
+        }
     }
 
     function fmt(n) {

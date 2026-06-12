@@ -56,8 +56,8 @@ if (!defined('ROOT')) die('Direct access forbidden');
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
         crossorigin="anonymous"></script>
 
-<script src="/js/carousel.js"></script>
-<script src="/js/cart.js"></script>
+<script src="/assets/js/carousel.js"></script>
+<script src="/assets/js/cart.js"></script>
 
 <?php if (!empty($extra_js)): ?>
     <?php foreach ($extra_js as $js): ?>

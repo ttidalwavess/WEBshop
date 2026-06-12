@@ -109,6 +109,6 @@ $editCategory = isset($_GET['edit']) ? category_by_id((int)$_GET['edit']) : null
     </section>
 </main>
 
-<script src="/assets/js/admin.js"></script>
+<script src="/admin/assets/js/admin.js"></script>
 </body>
 </html>

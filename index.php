@@ -17,7 +17,7 @@ include ROOT . '/includes/header.php';
 
     <section class="hero-section">
         <div class="hero-image">
-            <img src="hero.jpg" alt="LIGHT — женская одежда">
+            <img src="/images/hero.jpg" alt="LIGHT — женская одежда">
         </div>
         <div class="hero-content">
             <h1 class="hero-title">LIGHT</h1>

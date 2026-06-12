@@ -29,7 +29,7 @@ include ROOT . '/includes/header.php';
 
 <main class="auth-page">
     <div class="auth-image">
-        <img src="auth-bg.png" alt="LIGHT Studio">
+        <img src="/images/auth-bg.png" alt="LIGHT Studio">
     </div>
 
     <div class="auth-form-side">
@@ -64,7 +64,7 @@ include ROOT . '/includes/header.php';
                 <button type="submit" class="auth-btn">Зарегистрироваться</button>
             </form>
 
-            <p class="auth-footer">Есть аккаунт? <a href="/login.php">Войти</a></p>
+            <p class="auth-footer">Есть аккаунт? <a href="/authorization/login.php">Войти</a></p>
         </div>
     </div>
 </main>

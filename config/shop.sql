@@ -46,7 +46,6 @@ CREATE TABLE IF NOT EXISTS cart (
     product_id INT UNSIGNED NOT NULL,
     quantity   INT UNSIGNED NOT NULL DEFAULT 1,
     added_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_cart_item (user_id, product_id),
     FOREIGN KEY (user_id)    REFERENCES users(id)    ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -151,17 +150,17 @@ INSERT INTO products (category_id, name, slug, description, price, size, is_top,
  1900.00, 'Маленький', 1, 1);
 
 INSERT INTO product_images (product_id, filename, is_main, sort_order) VALUES
-(45, 'dress_red.png', 1, 1),
-(46, 'dress_black.png', 1, 1),
-(47, 'dress_brown.png', 1, 1),
-(48, 'skirt_midi.png', 1, 1),
-(49, 'skirt_mini.png', 1, 1),
-(50, 'blouse_white.png', 1, 1),
-(51, 'blouse_beige.png', 1, 1),
-(52, 'blouse_black.png', 1, 1),
-(53, 'trousers_black.png', 1, 1),
-(54, 'trousers_brown.png', 1, 1),
-(55, 'trousers_grey.png', 1, 1),
-(56, 'accessory.png', 1, 1),
-(57, 'bag_brown.png', 1, 1),
-(58, 'bag_black.png', 1, 1);
+(1, 'dress_red.png', 1, 1),
+(2, 'dress_black.png', 1, 1),
+(3, 'dress_brown.png', 1, 1),
+(4, 'skirt_midi.png', 1, 1),
+(5, 'skirt_mini.png', 1, 1),
+(6, 'blouse_white.png', 1, 1),
+(7, 'blouse_beige.png', 1, 1),
+(8, 'blouse_black.png', 1, 1),
+(9, 'trousers_black.png', 1, 1),
+(10, 'trousers_brown.png', 1, 1),
+(11, 'trousers_grey.png', 1, 1),
+(12, 'accessory.png', 1, 1),
+(13, 'bag_brown.png', 1, 1),
+(14, 'bag_black.png', 1, 1);

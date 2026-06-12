@@ -2,12 +2,12 @@
 if (!defined('ROOT')) die('Direct access forbidden');
 require_once ROOT . '/includes/security.php';
 
-//$_session['cart'] заполнит маша 
 $cart_count = 0;
-if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
-    foreach ($_SESSION['cart'] as $item) {
-        $cart_count += (int)($item['qty'] ?? 1);
-    }
+if (is_logged_in()) {
+    $pdo = db();
+    $stmt = $pdo->prepare("SELECT SUM(quantity) as total FROM cart WHERE user_id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $cart_count = (int)($stmt->fetch()['total'] ?? 0);
 }
 
 $current = basename($_SERVER['PHP_SELF']);

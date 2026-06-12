@@ -4,7 +4,7 @@ require_once ROOT . '/config/db.php';
 require_once ROOT . '/includes/security.php';
 
 session_start_safe();
-require_login('authorization/login.php');
+require_login('/login.php');
 
 // Получаем данные пользователя из БД
 $pdo  = db();
@@ -18,7 +18,7 @@ include ROOT . '/includes/header.php';
 
 <main class="auth-page">
     <div class="auth-image">
-        <img src="auth-bg.png" alt="LIGHT Studio">
+        <img src="/images/auth-bg.png" alt="LIGHT Studio">
     </div>
 
     <div class="auth-form-side">
