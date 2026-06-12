@@ -13,7 +13,7 @@ include ROOT . '/includes/header.php';
     <!-- Hero блок -->
     <section class="about-hero">
         <div class="about-hero__image">
-            <img src="auth-bg.png" alt="LIGHT Studio">
+            <img src="/img/auth-bg.png" alt="LIGHT Studio">
         </div>
         <div class="about-hero__content">
             <p class="about-hero__label">✦ Light Studio ✦</p>

@@ -17,7 +17,7 @@ include ROOT . '/includes/header.php';
 
     <section class="hero-section">
         <div class="hero-image">
-            <img src="hero.jpg" alt="LIGHT — женская одежда">
+            <img src="/img/hero.jpg" alt="LIGHT — женская одежда">
         </div>
         <div class="hero-content">
             <h1 class="hero-title">LIGHT</h1>
@@ -34,13 +34,13 @@ include ROOT . '/includes/header.php';
     </section>
 
     <div class="banner-placeholder">
-        <img src="banner2.png" alt="Баннер 1">
+        <img src="/img/banner2.png" alt="Баннер 1">
     </div>
 
     <?php render_carousel('Новая коллекция', $newProducts); ?>
 
     <div class="banner-placeholder">
-        <img src="banner3.png" alt="Баннер 1">
+        <img src="/img/banner3.png" alt="Баннер 1">
     </div>
 
     <?php render_carousel('Топ продаж', $topProducts); ?>

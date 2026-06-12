@@ -11,7 +11,7 @@ include ROOT . '/includes/header.php';
 
 <main class="auth-page">
     <div class="auth-image">
-        <img src="auth-bg.png" alt="LIGHT Studio">
+        <img src="/img/auth-bg.png" alt="LIGHT Studio">
         <div class="auth-image__logo">
             <div class="auth-image__brand">LIGHT</div>
             <div class="auth-image__sub">STUDIO</div>
