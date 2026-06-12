@@ -78,17 +78,6 @@ include ROOT . '/includes/header.php';
                 &#8381; <?= number_format((float)$product['price'], 0, '.', ' ') ?>
             </div>
 
-            <?php if ($product['is_new'] || $product['is_top']): ?>
-            <div class="product-details__badges">
-                <?php if ($product['is_new']): ?>
-                    <span class="badge badge--new">Новинка</span>
-                <?php endif; ?>
-                <?php if ($product['is_top']): ?>
-                    <span class="badge badge--top">Хит продаж</span>
-                <?php endif; ?>
-            </div>
-            <?php endif; ?>
-
             <!-- Размеры -->
             <div class="product-sizes">
                 <div class="product-sizes__label">размер</div>
@@ -107,7 +96,6 @@ include ROOT . '/includes/header.php';
                         <span class="size-universal">Универсальный</span>
                     <?php endif; ?>
                 </div>
-                <a href="#" class="product-sizes__table-link">таблица размеров</a>
             </div>
 
             <!-- Кнопки -->
@@ -121,15 +109,6 @@ include ROOT . '/includes/header.php';
                 <?php else: ?>
                     <a href="/login.php" class="btn-add-cart">Войдите, чтобы купить</a>
                 <?php endif; ?>
-
-                <button class="btn-wishlist" aria-label="В избранное">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                         stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06
-                                 a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
-                                 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                    </svg>
-                </button>
             </div>
 
             <!-- Аккордеон -->

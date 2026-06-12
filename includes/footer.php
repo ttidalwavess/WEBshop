@@ -8,9 +8,9 @@ if (!defined('ROOT')) die('Direct access forbidden');
         <div class="footer-col">
             <h4>Социальные сети</h4>
             <ul>
-                <li><a href="#" target="_blank" rel="noopener">Вконтакте</a></li>
-                <li><a href="#" target="_blank" rel="noopener">Telegram</a></li>
-                <li><a href="#" target="_blank" rel="noopener">Instagram</a></li>
+                <li><a>Вконтакте</a></li>
+                <li><a>Telegram</a></li>
+                <li><a>Instagram</a></li>
             </ul>
         </div>
 
@@ -24,24 +24,24 @@ if (!defined('ROOT')) die('Direct access forbidden');
         <div class="footer-col">
             <h4>Контакты</h4>
             <ul>
-                <li><a href="tel:+74953431233">+7 (495) 343-12-33</a></li>
-                <li><a href="tel:+74958787387">+7 (495) 878-73-87</a></li>
+                <li><a>+7 (495) 343-12-33</a></li>
+                <li><a>+7 (495) 878-73-87</a></li>
             </ul>
         </div>
 
         <div class="footer-col">
             <h4>Поддержка</h4>
             <ul>
-                <li><a href="/about.php#help">Помощь покупателю</a></li>
-                <li><a href="/about.php#delivery">Доставка и возврат</a></li>
+                <li><a>Помощь покупателю</a></li>
+                <li><a>Доставка и возврат</a></li>
             </ul>
         </div>
 
         <div class="footer-col">
             <h4>Информация</h4>
             <ul>
-                <li><a href="#">Блог</a></li>
-                <li><a href="#">Вакансии</a></li>
+                <li><a>Блог</a></li>
+                <li><a>Вакансии</a></li>
             </ul>
         </div>
 

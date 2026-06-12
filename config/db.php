@@ -5,7 +5,7 @@ define('DB_USER', 'root');
 define('DB_PASS', '');            
 define('DB_CHARSET', 'utf8mb4');
 
-define('UPLOAD_DIR', __DIR__ . '/../uploads/products/'); //заменить под себя
+define('UPLOAD_DIR', __DIR__ . '/../uploads/products/');
 define('UPLOAD_URL', '/uploads/products/');
 define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5 MB
 define('ALLOWED_MIME', ['image/jpeg', 'image/png', 'image/webp', 'image/gif']);

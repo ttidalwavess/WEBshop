@@ -201,14 +201,6 @@ function render_product_card(array $p): void
     <a href="/product.php?id=<?= $id ?>" class="product-card">
         <div class="product-img">
             <img src="<?= $imgSrc ?>" alt="<?= $name ?>" loading="lazy">
-            <div class="product-card-badges">
-                <?php if (!empty($p['is_new'])): ?>
-                    <span class="badge badge--new">Новинка</span>
-                <?php endif; ?>
-                <?php if (!empty($p['is_top'])): ?>
-                    <span class="badge badge--top">Хит</span>
-                <?php endif; ?>
-            </div>
         </div>
         <div class="product-info">
             <div class="product-category"><?= $category ?></div>

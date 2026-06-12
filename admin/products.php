@@ -52,7 +52,7 @@ $categories = categories_all();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Товары — Админка</title>
     <link rel="stylesheet" href="/assets/css/style.css">
-    <link rel="stylesheet" href="/assets/css/admin.css">
+    <link rel="stylesheet" href="/admin/assets/css/admin.css">
 </head>
 <body class="admin-layout">
 <?php include __DIR__ . '/includes/admin_nav.php'; ?>

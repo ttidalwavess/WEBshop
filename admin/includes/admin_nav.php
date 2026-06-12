@@ -30,8 +30,13 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     </nav>
     <div class="admin-sidebar__footer">
         <span><?= e($_SESSION['username'] ?? '') ?></span>
-        <form method="post" action="/index.php" style="display:inline">
-            <button type="submit" class="btn btn--sm btn--ghost">Выйти</button>
-        </form>
+        <a href="/index.php" class="btn btn--sm" 
+            style="background:#E7F0F7;color:#330000;border:none">
+            На главную
+        </a>
     </div>
 </aside>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous"></script>

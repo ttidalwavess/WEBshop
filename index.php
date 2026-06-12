@@ -17,7 +17,7 @@ include ROOT . '/includes/header.php';
 
     <section class="hero-section">
         <div class="hero-image">
-            <img src="/img/hero.jpg" alt="LIGHT — женская одежда">
+            <img src="hero.jpg" alt="LIGHT — женская одежда">
         </div>
         <div class="hero-content">
             <h1 class="hero-title">LIGHT</h1>
@@ -26,18 +26,22 @@ include ROOT . '/includes/header.php';
                 Мы создаём одежду для женщин, которые ценят лёгкость и характер в каждой детали.
             </p>
             <ul class="hero-for-list">
+                <li>Для воздушных образов и свободы</li>
                 <li>Новые коллекции каждый сезон</li>
                 <li>Доставка по всей России</li>
-                <li>Возврат в течение 14 дней</li>
             </ul>
         </div>
     </section>
 
-    <div class="banner-placeholder" aria-hidden="true"></div>
+    <div class="banner-placeholder">
+        <img src="banner2.png" alt="Баннер 1">
+    </div>
 
     <?php render_carousel('Новая коллекция', $newProducts); ?>
 
-    <div class="banner-placeholder" aria-hidden="true"></div>
+    <div class="banner-placeholder">
+        <img src="banner3.png" alt="Баннер 1">
+    </div>
 
     <?php render_carousel('Топ продаж', $topProducts); ?>
 
