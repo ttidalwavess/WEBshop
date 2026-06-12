@@ -44,7 +44,7 @@ $(function () {
             success: function (res) {
                 if (res.success) {
                     updateCartBadge(res.cart_count);
-                    $btn.text('Добавлено').css({ background: '#27ae60', color: '#fff' });
+                    $btn.text('Добавлено');
                     setTimeout(function () {
                         $btn.text('В корзину').css({ background: '', color: '' }).prop('disabled', false);
                     }, 1800);

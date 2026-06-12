@@ -21,8 +21,9 @@ if (!$product) {
 }
 
 $mainImgSrc = product_img_url(product_main_image($id));
-$allImgs = product_image_filenames($id); // ['img_abc.jpg', 'img_def.png', ...]
+$allImgs = product_image_filenames($id);
 
+// ── Хлебные крошки ──
 $clothSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 $bagSizes   = ['Большой', 'Средний', 'Маленький'];
 $curSize    = $product['size'] ?? '';
@@ -63,13 +64,12 @@ if ($from_slug !== '') {
 $category_label = htmlspecialchars($product['category_name'] ?? '', ENT_QUOTES, 'UTF-8');
 
 $page_title = 'LIGHT | ' . $product['name'];
-$extra_js   = ['/js/product.js'];
+$extra_js   = ['/assets/js/product.js'];
 
 include ROOT . '/includes/header.php';
 ?>
 
 <main class="product-page">
-
     <nav class="breadcrumb">
         <a href="/index.php">Главная</a>
         <span>/</span>
@@ -79,37 +79,26 @@ include ROOT . '/includes/header.php';
     </nav>
 
     <div class="product-layout">
-
-        <!-- ── ГАЛЕРЕЯ ── -->
+        <!-- Галерея -->
         <div class="product-gallery">
             <div class="product-gallery__main">
-                <img src="<?= $mainImgSrc ?>"
-                     alt="<?= htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8') ?>"
-                     id="main-product-img">
+                <img src="<?= $mainImgSrc ?>" alt="<?= htmlspecialchars($product['name']) ?>" id="main-product-img">
             </div>
-
             <?php if (count($allImgs) > 1): ?>
             <div class="product-gallery__thumbs">
                 <?php foreach ($allImgs as $i => $fname): ?>
-                    <img src="<?= product_img_url($fname) ?>"
-                         alt="Фото <?= $i + 1 ?>"
-                         class="product-gallery__thumb <?= $i === 0 ? 'product-gallery__thumb--active' : '' ?>"
+                    <img src="<?= product_img_url($fname) ?>" alt="Фото <?= $i + 1 ?>"
+                         class="product-gallery__thumb <?= $i === 0 ? 'active' : '' ?>"
                          data-src="<?= product_img_url($fname) ?>">
                 <?php endforeach; ?>
             </div>
             <?php endif; ?>
         </div>
 
-        <!-- ── ИНФО ── -->
+        <!-- Информация -->
         <div class="product-details">
-
-            <h1 class="product-details__name">
-                <?= htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8') ?>
-            </h1>
-
-            <div class="product-details__price">
-                &#8381; <?= number_format((float)$product['price'], 0, '.', ' ') ?>
-            </div>
+            <h1 class="product-details__name"><?= htmlspecialchars($product['name']) ?></h1>
+            <div class="product-details__price">₽ <?= number_format((float)$product['price'], 0, '.', ' ') ?></div>
 
             <!-- Размеры -->
             <div class="product-sizes">
@@ -117,13 +106,11 @@ include ROOT . '/includes/header.php';
                 <div class="product-sizes__grid">
                     <?php if (in_array($curSize, $clothSizes, true)): ?>
                         <?php foreach ($clothSizes as $sz): ?>
-                            <button class="size-btn <?= $sz === $curSize ? 'active' : '' ?>"
-                                    data-size="<?= $sz ?>"><?= $sz ?></button>
+                            <button class="size-btn <?= $sz === $curSize ? 'active' : '' ?>" data-size="<?= $sz ?>"><?= $sz ?></button>
                         <?php endforeach; ?>
                     <?php elseif (in_array($curSize, $bagSizes, true)): ?>
                         <?php foreach ($bagSizes as $sz): ?>
-                            <button class="size-btn <?= $sz === $curSize ? 'active' : '' ?>"
-                                    data-size="<?= $sz ?>"><?= $sz ?></button>
+                            <button class="size-btn <?= $sz === $curSize ? 'active' : '' ?>" data-size="<?= $sz ?>"><?= $sz ?></button>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <span class="size-universal">Универсальный</span>
@@ -136,7 +123,7 @@ include ROOT . '/includes/header.php';
                 <?php if (is_logged_in()): ?>
                     <button class="btn-add-cart btn-add-to-cart"
                             data-id="<?= (int)$product['id'] ?>"
-                            data-name="<?= htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8') ?>">
+                            data-name="<?= htmlspecialchars($product['name']) ?>">
                         В корзину
                     </button>
                 <?php else: ?>
@@ -147,28 +134,20 @@ include ROOT . '/includes/header.php';
             <!-- Аккордеон -->
             <div class="accordion">
                 <div class="accordion-item">
-                    <button class="accordion-trigger">
-                        описание <span class="accordion-icon">+</span>
-                    </button>
+                    <button class="accordion-trigger">описание <span class="accordion-icon">+</span></button>
                     <div class="accordion-body">
-                        <p><?= htmlspecialchars($product['description'] ?? 'Описание отсутствует.', ENT_QUOTES, 'UTF-8') ?></p>
+                        <p><?= htmlspecialchars($product['description'] ?? 'Описание отсутствует.') ?></p>
                     </div>
                 </div>
                 <div class="accordion-item">
-                    <button class="accordion-trigger">
-                        уход за товаром<span class="accordion-icon">+</span>
-                    </button>
+                    <button class="accordion-trigger">доставка и возврат <span class="accordion-icon">+</span></button>
                     <div class="accordion-body">
-                        <p>Чтобы изделие радовало вас как можно дольше, соблюдайте базовые правила ухода:
-                            берегите его от прямых солнечных лучей и источников тепла,
-                            избегайте контакта с агрессивными жидкостями и парфюмом.</p>
+                        <p>Доставка по России от 3 до 7 рабочих дней. Возврат в течение 14 дней.</p>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
-
 </main>
 
 <?php include ROOT . '/includes/footer.php'; ?>
