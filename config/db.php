@@ -1,5 +1,5 @@
 <?php
-define('DB_HOST', 'localhost');
+define('DB_HOST', '192.168.31.84');
 define('DB_NAME', 'shop_db');
 define('DB_USER', 'root');        
 define('DB_PASS', '');            

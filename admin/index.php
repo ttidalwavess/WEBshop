@@ -23,10 +23,20 @@ $recentOrders = $pdo->query(
      ORDER BY o.created_at DESC LIMIT 5"
 )->fetchAll();
 
-$statusColors = ['pending'=>'badge--warning','processing'=>'badge--info',
-                 'shipped'=>'badge--primary','delivered'=>'badge--success','cancelled'=>'badge--danger'];
-$statusLabels = ['pending'=>'Ожидает','processing'=>'Обрабатывается',
-                 'shipped'=>'Отправлен','delivered'=>'Доставлен','cancelled'=>'Отменён'];
+$statusColors = [
+    'processing' => 'badge--info',
+    'accepted'   => 'badge--warning',
+    'assembled'  => 'badge--primary',
+    'received'   => 'badge--success',
+    'cancelled'  => 'badge--danger',
+];
+$statusLabels = [
+    'processing' => 'В обработке',
+    'accepted'   => 'Принят',
+    'assembled'  => 'Собран',
+    'received'   => 'Получен',
+    'cancelled'  => 'Отменён',
+];
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -47,7 +57,6 @@ $statusLabels = ['pending'=>'Ожидает','processing'=>'Обрабатыва
 
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-card__icon">🗂</div>
             <div class="stat-card__body">
                 <div class="stat-card__value"><?= $stats['categories'] ?></div>
                 <div class="stat-card__label">Категорий</div>
@@ -55,34 +64,31 @@ $statusLabels = ['pending'=>'Ожидает','processing'=>'Обрабатыва
             <a href="/admin/categories.php" class="stat-card__link">Управлять →</a>
         </div>
         <div class="stat-card">
-            <div class="stat-card__icon">👗</div>
             <div class="stat-card__body">
                 <div class="stat-card__value"><?= $stats['products_total'] ?></div>
-                <div class="stat-card__label">Товаров <small>(активных: <?= $stats['products_active'] ?>)</small></div>
+                <div class="stat-card__label">Товаров</div>
             </div>
             <a href="/admin/products.php" class="stat-card__link">Управлять →</a>
         </div>
         <div class="stat-card">
-            <div class="stat-card__icon">👤</div>
             <div class="stat-card__body">
                 <div class="stat-card__value"><?= $stats['users'] ?></div>
                 <div class="stat-card__label">Покупателей</div>
             </div>
         </div>
         <div class="stat-card stat-card--accent">
-            <div class="stat-card__icon">🛒</div>
             <div class="stat-card__body">
                 <div class="stat-card__value"><?= $stats['orders_today'] ?></div>
                 <div class="stat-card__label">Заказов сегодня <small>(всего: <?= $stats['orders_total'] ?>)</small></div>
             </div>
-            <a href="/admin/orders.php" class="stat-card__link">Live-заказы →</a>
+            <a href="/admin/admin_orders.php" class="stat-card__link">Live-заказы →</a>
         </div>
     </div>
 
     <section class="admin-card">
         <div class="admin-card__header">
             <h2>Последние заказы</h2>
-            <a href="/admin/orders.php" class="btn btn--sm btn--ghost">Все заказы</a>
+            <a href="/admin/admin_orders.php" class="btn btn--sm btn--ghost">Все заказы</a>
         </div>
         <?php if (empty($recentOrders)): ?>
             <p class="empty-hint">Заказов пока нет.</p>
@@ -110,13 +116,13 @@ $statusLabels = ['pending'=>'Ожидает','processing'=>'Обрабатыва
     <section class="admin-card">
         <h2>Быстрые действия</h2>
         <div class="quick-actions">
-            <a href="/admin/categories.php" class="btn btn--secondary">➕ Новая категория</a>
-            <a href="/admin/products.php"   class="btn btn--secondary">➕ Новый товар</a>
-            <a href="/admin/orders.php"     class="btn btn--secondary">📋 Заказы (live)</a>
-            <a href="/" target="_blank"     class="btn btn--ghost">🌐 Открыть сайт</a>
+            <a href="/admin/categories.php" class="btn btn--secondary">Новая категория</a>
+            <a href="/admin/products.php"   class="btn btn--secondary">Новый товар</a>
+            <a href="/" target="_blank"     class="btn btn--ghost">Открыть сайт</a>
         </div>
     </section>
 </main>
-<script src="/assets/js/admin.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="/admin/assets/js/admin.js"></script>
 </body>
 </html>

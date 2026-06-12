@@ -62,7 +62,6 @@ function require_admin(): void {
 }
 
 // хэш паролей
-
 function hash_password(string $plain): string {
     return password_hash($plain, PASSWORD_BCRYPT, ['cost' => 12]);
 }
@@ -83,4 +82,22 @@ function make_slug(string $str): string {
     $str = strtr($str, $trans);
     $str = preg_replace('/[^a-z0-9]+/', '-', $str);
     return trim($str, '-');
+}
+
+// токены
+function csrf_token(): string {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+// проверка токенов
+function csrf_verify(string $token): bool {
+    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+}
+
+// вывод токена
+function csrf_field(): string {
+    return '<input type="hidden" name="csrf_token" value="' . csrf_token() . '">';
 }

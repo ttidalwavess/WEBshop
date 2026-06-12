@@ -2,51 +2,35 @@
 define('ROOT', __DIR__);
 require_once ROOT . '/config/db.php';
 require_once ROOT . '/includes/security.php';
+require_once ROOT . '/includes/orders.php';
 
 session_start_safe();
 
 if (!is_logged_in()) { header('Location: /login_required.php'); exit; }
 
 $pdo = db();
+$error   = '';
+$success = false;
 
-/*
 // Получаем корзину
 $stmt = $pdo->prepare("
-    SELECT c.id AS cart_id, c.quantity, c.product_id,
-           p.name, p.price, p.size,
+    SELECT c.id AS cart_id, c.quantity, c.product_id, c.size,
+           p.name, p.price,
            pi.filename AS img
     FROM cart c
     JOIN products p ON p.id = c.product_id
     LEFT JOIN product_images pi ON pi.product_id = p.id AND pi.is_main = 1
     WHERE c.user_id = ?
-    ORDER BY c.added_at DESC
 ");
 $stmt->execute([$_SESSION['user_id']]);
 $items = $stmt->fetchAll();
-*/
 
-// ЗАГЛУШКА
-$items = [
-    ['cart_id'=>1, 'product_id'=>1, 'quantity'=>1, 'name'=>'Платье красное',  'price'=>4990, 'size'=>'S',  'img'=>'dress_red.png'],
-    ['cart_id'=>2, 'product_id'=>3, 'quantity'=>1, 'name'=>'Платье браун',    'price'=>6200, 'size'=>'M',  'img'=>'dress_brown.png'],
-    ['cart_id'=>3, 'product_id'=>7, 'quantity'=>2, 'name'=>'Блузка бежевая',  'price'=>2200, 'size'=>'S',  'img'=>'blouse_beige.png'],
-];
-
-
-// Если корзина пустая — назад
 if (empty($items)) { header('Location: /cart.php'); exit; }
 
 $total = 0;
 foreach ($items as $item) {
     $total += $item['price'] * $item['quantity'];
 }
-
-// -------------------------------------------------------
-// Обработка POST — оформление заказа (тестовый режим)
-// Реальную логику создания заказа в БД добавит Роль 2
-// -------------------------------------------------------
-$error   = '';
-$success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name  = input_str('name');
@@ -55,15 +39,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (mb_strlen($name) < 2) {
         $error = 'Укажите имя получателя.';
     } elseif (mb_strlen($phone) < 7) {
-        $error = 'Укажите номер телефона.';
+    $error = 'Укажите номер телефона.';
+    } elseif (!preg_match('/^[\d\s\+\-\(\)]{7,20}$/', $phone)) {
+    $error = 'Введите корректный номер телефона.';
     } else {
-        // TODO (Роль 2): создать заказ в БД и очистить корзину
-        // $order_id = create_order($pdo, $_SESSION['user_id'], $items, $total, $name, $phone, $address);
-        // clear_cart($pdo, $_SESSION['user_id']);
-        // header('Location: /order.php?id=' . $order_id); exit;
+        // Логика подруги
+        $result = order_create_from_cart($_SESSION['user_id'], $name, $phone);
 
-        // Пока — тестовый режим, просто показываем успех
-        $success = true;
+        if (isset($result['error'])) {
+            $error = $result['error'];
+        } else {
+            $success = true;
+            $_SESSION['last_order_id'] = $result['order_id'];
+        }
     }
 }
 
@@ -75,7 +63,6 @@ include ROOT . '/includes/header.php';
     <div class="checkout-layout">
 
         <?php if ($success): ?>
-        <!-- Успешное оформление -->
         <div class="checkout-success">
             <div class="empty-state__icon" style="margin:0 auto 1.5rem">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -85,7 +72,8 @@ include ROOT . '/includes/header.php';
             </div>
             <h1 class="checkout-success__title">Заказ оформлен!</h1>
             <p class="checkout-success__text">
-                Мы получили ваш заказ и скоро свяжемся с вами для подтверждения.
+                Спасибо за заказ! Мы свяжемся с вами в ближайшее время для подтверждения.<br>
+                Номер вашего заказа: <strong>№<?= $_SESSION['last_order_id'] ?? '' ?></strong>
             </p>
             <a href="/orders.php" class="empty-state__btn">Мои заказы</a>
             <a href="/index.php" class="checkout-success__link">Вернуться на главную</a>
@@ -93,7 +81,6 @@ include ROOT . '/includes/header.php';
 
         <?php else: ?>
 
-        <!-- Форма -->
         <div class="checkout-left">
             <h1 class="checkout-title">Оформление заказа</h1>
 
@@ -105,30 +92,26 @@ include ROOT . '/includes/header.php';
 
                 <div class="checkout-section">
                     <h2 class="checkout-section__title">Данные получателя</h2>
-
                     <div class="checkout-field">
-                        <label for="name">Имя и фамилия</label>
+                        <label for="name">Имя и фамилия *</label>
                         <input type="text" id="name" name="name"
                                placeholder="Иванова Анна"
-                               value="<?= e($_POST['name'] ?? '') ?>"
-                               required>
+                               value="<?= e($_POST['name'] ?? '') ?>" required>
                     </div>
-
                     <div class="checkout-field">
-                        <label for="phone">Телефон</label>
+                        <label for="phone">Телефон *</label>
                         <input type="tel" id="phone" name="phone"
                                placeholder="+7 (900) 000-00-00"
-                               value="<?= e($_POST['phone'] ?? '') ?>"
-                               required>
+                               value="<?= e($_POST['phone'] ?? '') ?>" required>
                     </div>
                 </div>
 
                 <div class="checkout-section">
                     <h2 class="checkout-section__title">Самовывоз</h2>
-                        <div class="checkout-info-block">
-                            <div class="checkout-info-block__row">
-                                <span>Владивосток, ул. Аллилуева, 12А</span>
-                            </div>
+                    <div class="checkout-info-block">
+                        <div class="checkout-info-block__row">
+                            <span>Владивосток, ул. Аллилуева, 12А</span>
+                        </div>
                         <div class="checkout-info-block__row">
                             <span>Оплата в магазине при получении</span>
                         </div>
@@ -138,7 +121,6 @@ include ROOT . '/includes/header.php';
                     </div>
                 </div>
 
-                <!-- Кнопка на мобильном — внизу формы -->
                 <button type="submit" class="checkout-submit checkout-submit--mobile">
                     Оформить заказ — ₽ <?= number_format($total, 0, '.', ' ') ?>
                 </button>
@@ -146,7 +128,6 @@ include ROOT . '/includes/header.php';
             </form>
         </div>
 
-        <!-- Итого -->
         <div class="checkout-right">
             <div class="cart-summary">
                 <h2 class="cart-summary__title">Ваш заказ</h2>
@@ -184,7 +165,7 @@ include ROOT . '/includes/header.php';
                     Оформить заказ
                 </button>
 
-                <a href="/cart.php" class="checkout-back">Вернуться в корзину</a>
+                <a href="/cart.php" class="checkout-back">← Вернуться в корзину</a>
             </div>
         </div>
 

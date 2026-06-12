@@ -5,5 +5,5 @@ require_once ROOT . '/includes/auth.php';
 
 session_start_safe();
 auth_logout();
-header('Location: /index.php');
+header('Location: /login.php');
 exit;

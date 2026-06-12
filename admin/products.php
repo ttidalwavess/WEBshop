@@ -99,14 +99,11 @@ $categories = categories_all();
                     <label>Размер</label>
                     <select name="size">
                         <optgroup label="Одежда">
-                            <option>XS</option><option>S</option><option>M</option>
+                            <option>XS</option><option>S</option><option selected>M</option>
                             <option>L</option><option>XL</option><option>XXL</option>
                         </optgroup>
-                        <optgroup label="Сумки">
-                            <option>Большой</option><option>Средний</option><option>Маленький</option>
-                        </optgroup>
-                        <optgroup label="Украшения">
-                            <option selected>Универсальный</option>
+                        <optgroup label="Другое">
+                            <option>Универсальный</option>
                         </optgroup>
                     </select>
                 </div>
@@ -136,13 +133,12 @@ $categories = categories_all();
         <?php else: ?>
         <table class="admin-table">
             <thead>
-                <tr><th>#</th><th>Фото</th><th>Название</th><th>Категория</th>
+                <tr><th>Фото</th><th>Название</th><th>Категория</th>
                     <th>Размер</th><th>Цена</th><th>New</th><th>Top</th><th>Действия</th></tr>
             </thead>
             <tbody>
             <?php foreach ($products as $p): ?>
-                <tr class="row--inactive">
-                    <td><?= (int)$p['id'] ?></td>
+                <tr>
                     <td>
                         <?php if ($p['main_image']): ?>
                             <img src="<?= product_img_url($p['main_image']) ?>" alt="" class="thumb">
@@ -153,10 +149,11 @@ $categories = categories_all();
                     <td><?= e($p['name']) ?></td>
                     <td><?= e($p['category_name']) ?></td>
                     <td><?= e($p['size']) ?></td>
-                    <td><?= number_format($p['price'], 2, '.', ' ') ?> ₽</td>
-                    <td><?= $p['is_new'] ? '✨' : '—' ?></td>
-                    <td><?= $p['is_top'] ? '🔥' : '—' ?></td>
+                    <td><?= number_format($p['price'], 0, '.', ' ') ?> ₽</td>
+                    <td><span class="<?= $p['is_new'] ? 'flag-yes' : 'flag-no' ?>"><?= $p['is_new'] ? '+' : '−' ?></span></td>
+                    <td><span class="<?= $p['is_top'] ? 'flag-yes' : 'flag-no' ?>"><?= $p['is_top'] ? '+' : '−' ?></span></td>
                     <td class="actions">
+                        <div class="actions-wrap">
                         <a href="/admin/product_edit.php?id=<?= (int)$p['id'] ?>"
                            class="btn btn--sm btn--ghost">Изменить</a>
                         <form method="post" action="/admin/products.php"
@@ -165,6 +162,7 @@ $categories = categories_all();
                             <input type="hidden" name="id" value="<?= (int)$p['id'] ?>">
                             <button type="submit" class="btn btn--sm btn--danger">Удалить</button>
                         </form>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -174,6 +172,9 @@ $categories = categories_all();
     </section>
 </main>
 
-<script src="/assets/js/admin.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous"></script>
+<script src="/admin/assets/js/admin.js"></script>
 </body>
 </html>

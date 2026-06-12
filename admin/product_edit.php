@@ -16,7 +16,7 @@ if (!$product) {
     die('Товар не найден.');
 }
 
-$messege = '';
+$message = '';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -116,9 +116,8 @@ $images = product_images($productId);
                     <select name="size">
                         <?php
                         $sizes = [
-                            'Одежда'    => ['XS','S','M','L','XL','XXL'],
-                            'Сумки'     => ['Большой','Средний','Маленький'],
-                            'Украшения' => ['Универсальный'],
+                            'Одежда' => ['XS','S','M','L','XL','XXL'],
+                            'Другое' => ['Универсальный'],
                         ];
                         foreach ($sizes as $group => $opts): ?>
                             <optgroup label="<?= $group ?>">
@@ -198,6 +197,7 @@ $images = product_images($productId);
     </section>
 </main>
 
-<script src="/assets/js/admin.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="/admin/assets/js/admin.js"></script>
 </body>
 </html>

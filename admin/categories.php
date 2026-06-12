@@ -14,9 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = input_int('id');
 
     if ($action === 'create' || $action === 'update') {
-        $result = ($action === 'create')
-            ? category_create(input_str('name'), input_int('sort_order'))
-            : category_update($id, input_str('name'), input_int('sort_order'));
+        if ($result = ($action === 'create')) {
+            category_create(input_str('name'), input_int('sort_order'));
+        } else {
+            category_update($id, input_str('name'), input_int('sort_order'));
+        }
         $error   = $result['error'] ?? '';
         $message = $error ? '' : ($action === 'create' ? 'Категория создана.' : 'Категория обновлена.');
     }
@@ -53,22 +55,23 @@ $editCategory = isset($_GET['edit']) ? category_by_id((int)$_GET['edit']) : null
 
     <section class="admin-card">
         <h2><?= $editCategory ? 'Редактировать категорию' : 'Новая категория' ?></h2>
-        <form method="post" action="/admin/categories.php">
+        <form method="post" action="/admin/categories.php" class="form-inline">
             <input type="hidden" name="action" value="<?= $editCategory ? 'update' : 'create' ?>">
             <?php if ($editCategory): ?>
                 <input type="hidden" name="id" value="<?= (int)$editCategory['id'] ?>">
             <?php endif; ?>
-            <div class="form-group">
-                <label for="name">Название *</label>
+            <div class="form-group" style="min-width:200px">
+                <label for="name">Название</label>
                 <input type="text" id="name" name="name" required maxlength="100"
+                       placeholder="Например: Платья"
                        value="<?= e($editCategory['name'] ?? '') ?>">
             </div>
             <div class="form-group form-group--small">
-                <label for="sort_order">Порядок сортировки</label>
+                <label for="sort_order">Порядок</label>
                 <input type="number" id="sort_order" name="sort_order" min="0"
                        value="<?= (int)($editCategory['sort_order'] ?? 0) ?>">
             </div>
-            <div class="form-actions">
+            <div class="form-group" style="flex:0 0 auto;padding-top:1.55rem;margin-bottom:0">
                 <button type="submit" class="btn btn--primary"><?= $editCategory ? 'Сохранить' : 'Создать' ?></button>
                 <?php if ($editCategory): ?><a href="/admin/categories.php" class="btn btn--ghost">Отмена</a><?php endif; ?>
             </div>
@@ -80,19 +83,18 @@ $editCategory = isset($_GET['edit']) ? category_by_id((int)$_GET['edit']) : null
         <?php if (empty($categories)): ?>
             <p class="empty-hint">Категорий пока нет.</p>
         <?php else: ?>
-        <table class="admin-table">
-            <thead><tr><th>#</th><th>Название</th><th>Slug</th><th>Порядок</th><th>Действия</th></tr></thead>
+        <table class="admin-table admin-table--simple">
+            <thead><tr><th>Название</th><th>Slug</th><th>Порядок</th><th>Действия</th></tr></thead>
             <tbody>
             <?php foreach ($categories as $cat): ?>
                 <tr>
-                    <td><?= (int)$cat['id'] ?></td>
                     <td><?= e($cat['name']) ?></td>
                     <td><code><?= e($cat['slug']) ?></code></td>
                     <td><?= (int)$cat['sort_order'] ?></td>
                     <td class="actions">
+                        <div class="actions-wrap">
                         <a href="/admin/categories.php?edit=<?= (int)$cat['id'] ?>"
                            class="btn btn--sm btn--ghost">Изменить</a>
-
                         <form method="post" action="/admin/categories.php"
                               onsubmit="return confirm('Удалить категорию «<?= e($cat['name']) ?>»?')">
                             <?= csrf_field() ?>
@@ -100,6 +102,7 @@ $editCategory = isset($_GET['edit']) ? category_by_id((int)$_GET['edit']) : null
                             <input type="hidden" name="id" value="<?= (int)$cat['id'] ?>">
                             <button type="submit" class="btn btn--sm btn--danger">Удалить</button>
                         </form>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -109,6 +112,7 @@ $editCategory = isset($_GET['edit']) ? category_by_id((int)$_GET['edit']) : null
     </section>
 </main>
 
-<script src="/assets/js/admin.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="/admin/assets/js/admin.js"></script>
 </body>
 </html>

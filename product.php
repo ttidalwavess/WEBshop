@@ -65,7 +65,7 @@ if ($from_slug !== '') {
 $category_label = htmlspecialchars($product['category_name'] ?? '', ENT_QUOTES, 'UTF-8');
 
 $page_title = 'LIGHT | ' . $product['name'];
-$extra_js   = ['/js/product.js'];
+$extra_js = ['/assets/js/product.js'];
 
 include ROOT . '/includes/header.php';
 ?>

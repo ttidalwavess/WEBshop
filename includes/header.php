@@ -1,24 +1,25 @@
 <?php
 if (!defined('ROOT')) die('Direct access forbidden');
+require_once ROOT . '/config/db.php';
 require_once ROOT . '/includes/security.php';
 
-//$_session['cart'] заполнит маша 
 $cart_count = 0;
-if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
-    foreach ($_SESSION['cart'] as $item) {
-        $cart_count += (int)($item['qty'] ?? 1);
-    }
+if (is_logged_in()) {
+    $stmt = db()->prepare('SELECT COALESCE(SUM(quantity), 0) FROM cart WHERE user_id = ?');
+    $stmt->execute([$_SESSION['user_id']]);
+    $cart_count = (int)$stmt->fetchColumn();
 }
 
-$current = basename($_SERVER['PHP_SELF']);
+$current     = basename($_SERVER['PHP_SELF']);
 $current_cat = $_GET['cat'] ?? '';
-$callent_sale = isset($_GET['sale']);
+$current_sale = isset($_GET['sale']);
 ?>
+
 <!DOCTYPE html>
 <html lang="ru" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="user-logged-in" content="<?= is_logged_in() ? '1' : '0' ?>">
     <title><?= e($page_title ?? 'LIGHT | Женская одежда') ?></title>
     <link rel="stylesheet" href="/assets/css/style.css">
     <?php if (!empty($extra_css)): ?>

@@ -2,40 +2,22 @@
 define('ROOT', __DIR__);
 require_once ROOT . '/config/db.php';
 require_once ROOT . '/includes/security.php';
+require_once ROOT . '/includes/orders.php';
 
 session_start_safe();
 
 if (!is_logged_in()) { header('Location: /login_required.php'); exit; }
 
-$pdo = db();
-
-$stmt = $pdo->prepare("
-    SELECT o.id, o.total, o.created_at, os.name AS status
-    FROM orders o
-    JOIN order_statuses os ON os.id = o.status_id
-    WHERE o.user_id = ?
-    ORDER BY o.created_at DESC
-");
-$stmt->execute([$_SESSION['user_id']]);
-$orders = $stmt->fetchAll();
-
-// -------------------------------------------------------
-// ЗАГЛУШКА — удалить когда появятся реальные заказы
-$orders = [
-    ['id'=>1, 'total'=>11990, 'created_at'=>'2025-05-01 14:22:00', 'status'=>'delivered'],
-    ['id'=>2, 'total'=>4990,  'created_at'=>'2025-05-10 09:45:00', 'status'=>'shipped'],
-    ['id'=>3, 'total'=>6200,  'created_at'=>'2025-05-15 18:00:00', 'status'=>'pending'],
-];
-// -------------------------------------------------------
-
+// Логика подруги — получаем заказы из БД
+$orders = order_get_by_user($_SESSION['user_id']);
 
 function status_label(string $s): array {
     return [
-        'pending'    => ['Принят',      '#b8860b'],
-        'processing' => ['В обработке', '#1a6b9a'],
-        'shipped'    => ['Отправлен',   '#2d7a2d'],
-        'delivered'  => ['Доставлен',   '#27ae60'],
-        'cancelled'  => ['Отменён',     '#c0392b'],
+        'processing' => ['В обработке', '#2a4a7f'],
+        'accepted'   => ['Принят',      '#8b5e00'],
+        'assembled'  => ['Собран',      '#1a6b3a'],
+        'received'   => ['Получен',     '#7c7c7c'],
+        'cancelled'  => ['Отменён',     '#7a1a1a'],
     ][$s] ?? [$s, '#888'];
 }
 
@@ -71,23 +53,21 @@ include ROOT . '/includes/header.php';
                     <div class="order-card">
                         <div class="order-card__left">
                             <div class="order-card__number">Заказ №<?= (int)$order['id'] ?></div>
+                                <span class="order-status" style="color:<?= $color ?>">
+                                    <?= e($label) ?>
+                                </span>
                             <div class="order-card__date">
                                 <?= date('d.m.Y', strtotime($order['created_at'])) ?>
                             </div>
                         </div>
-                        <div class="order-card__center">
-                            <div class="order-card__total">
-                                ₽ <?= number_format((float)$order['total'], 0, '.', ' ') ?>
-                            </div>
-                        </div>
-                        <div class="order-card__right">
-                            <span class="order-status" style="color:<?= $color ?>">
-                                <?= e($label) ?>
-                            </span>
-                            <a href="/order.php?id=<?= (int)$order['id'] ?>"
-                               class="order-card__btn">Подробнее →</a>
-                        </div>
-                    </div>
+                            <div class="order-card__right">
+                                <div class="order-card__total">
+                                    ₽ <?= number_format((float)$order['total'], 0, '.', ' ') ?>
+                                </div>
+                                    <a href="/order.php?id=<?= (int)$order['id'] ?>"
+                                        class="order-card__btn">Подробнее</a>
+                                    </div>
+                                </div>
                 <?php endforeach; ?>
             </div>
 

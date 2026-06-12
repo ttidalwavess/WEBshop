@@ -9,9 +9,10 @@ if (!is_logged_in()) { header('Location: /login_required.php'); exit; }
 
 $pdo = db();
 
+// Корзина из БД — версия подруги с полем size
 $stmt = $pdo->prepare("
-    SELECT c.id AS cart_id, c.quantity, c.product_id,
-           p.name, p.price, p.size,
+    SELECT c.id AS cart_id, c.quantity, c.product_id, c.size,
+           p.name, p.price,
            pi.filename AS img
     FROM cart c
     JOIN products p ON p.id = c.product_id
@@ -21,17 +22,6 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$_SESSION['user_id']]);
 $items = $stmt->fetchAll();
-
-// -------------------------------------------------------
-// ЗАГЛУШКА — удалить когда корзина заработает через AJAX
-
-$items = [
-    ['cart_id'=>1, 'quantity'=>1, 'product_id'=>1,
-    'name'=>'Платье красное', 'price'=>4990, 'size'=>'S', 'img'=>'dress_red.png'],
-    ['cart_id'=>2, 'quantity'=>2, 'product_id'=>3,
-    'name'=>'Платье браун', 'price'=>6200, 'size'=>'M', 'img'=>'dress_brown.png'],
-];
-// -------------------------------------------------------
 
 $total = 0;
 foreach ($items as $item) {
@@ -76,8 +66,8 @@ include ROOT . '/includes/header.php';
                             : '/img/placeholder.jpg';
                         ?>
                         <div class="cart-item"
-                             data-cart-id="<?= (int)$item['cart_id'] ?>"
-                             data-price="<?= (float)$item['price'] ?>">
+                            data-cart-id="<?= (int)$item['cart_id'] ?>"
+                            data-price="<?= (float)$item['price'] ?>">
 
                             <a href="/product.php?id=<?= (int)$item['product_id'] ?>" class="cart-item__img">
                                 <img src="<?= $img ?>" alt="<?= e($item['name']) ?>">
@@ -89,7 +79,7 @@ include ROOT . '/includes/header.php';
                                 <?php if (!empty($item['size']) && $item['size'] !== 'Универсальный'): ?>
                                     <div class="cart-item__size">Размер: <?= e($item['size']) ?></div>
                                 <?php endif; ?>
-                                <div class="cart-item__price">
+                                <div class="cart-item__price" data-price="<?= (float)$item['price'] ?>">
                                     ₽ <?= number_format($item['price'] * $item['quantity'], 0, '.', ' ') ?>
                                 </div>
                             </div>
@@ -173,7 +163,6 @@ $(function () {
                 }
             },
             error: function () {
-                // заглушка до готовности API
                 updateItem($item, cartId, newQty, parseFloat($item.data('price')));
             }
         });

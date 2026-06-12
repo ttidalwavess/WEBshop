@@ -64,7 +64,7 @@ include ROOT . '/includes/header.php';
                 <button type="submit" class="auth-btn">Зарегистрироваться</button>
             </form>
 
-            <p class="auth-footer">Есть аккаунт? <a href="/login.php">Войти</a></p>
+            <p class="auth-footer">Есть аккаунт? <a href="/login.php" >Войти</a></p>
         </div>
     </div>
 </main>

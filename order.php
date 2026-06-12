@@ -2,6 +2,7 @@
 define('ROOT', __DIR__);
 require_once ROOT . '/config/db.php';
 require_once ROOT . '/includes/security.php';
+require_once ROOT . '/includes/orders.php';
 
 session_start_safe();
 
@@ -10,54 +11,18 @@ if (!is_logged_in()) { header('Location: /login_required.php'); exit; }
 $order_id = (int)($_GET['id'] ?? 0);
 if ($order_id <= 0) { header('Location: /orders.php'); exit; }
 
-$pdo = db();
-
-$stmt = $pdo->prepare("
-    SELECT o.id, o.total, o.created_at, os.name AS status
-    FROM orders o
-    JOIN order_statuses os ON os.id = o.status_id
-    WHERE o.id = ? AND o.user_id = ?
-    LIMIT 1
-");
-$stmt->execute([$order_id, $_SESSION['user_id']]);
-$order = $stmt->fetch();
-
-$stmt = $pdo->prepare("
-    SELECT oi.quantity, oi.price,
-           p.id AS product_id, p.name, p.size,
-           pi.filename AS img
-    FROM order_items oi
-    JOIN products p ON p.id = oi.product_id
-    LEFT JOIN product_images pi ON pi.product_id = p.id AND pi.is_main = 1
-    WHERE oi.order_id = ?
-");
-$stmt->execute([$order_id]);
-$items = $stmt->fetchAll();
-
-// -------------------------------------------------------
-// ЗАГЛУШКА
-$order = [
-    'id'         => 7,
-    'total'      => 15180,
-    'created_at' => '2025-05-15 18:32:00',
-    'status'     => 'shipped',
-];
-$items = [
-    ['product_id'=>1, 'name'=>'Платье красное',  'price'=>4990, 'quantity'=>1, 'size'=>'S',  'img'=>'dress_red.png'],
-    ['product_id'=>3, 'name'=>'Платье браун',    'price'=>6200, 'quantity'=>1, 'size'=>'M',  'img'=>'dress_brown.png'],
-    ['product_id'=>7, 'name'=>'Блузка бежевая',  'price'=>2200, 'quantity'=>2, 'size'=>'S',  'img'=>'blouse_beige.png'],
-];
-// -------------------------------------------------------
+// Логика подруги
+$order = order_get_details($order_id, $_SESSION['user_id']);
 
 if (!$order) { header('Location: /orders.php'); exit; }
 
 function status_label(string $s): array {
     return [
-        'pending'    => ['Принят',      '#b8860b'],
-        'processing' => ['В обработке', '#1a6b9a'],
-        'shipped'    => ['Отправлен',   '#2d7a2d'],
-        'delivered'  => ['Доставлен',   '#27ae60'],
-        'cancelled'  => ['Отменён',     '#c0392b'],
+        'processing' => ['В обработке', '#2a4a7f'],
+        'accepted'   => ['Принят',      '#8b5e00'],
+        'assembled'  => ['Собран',      '#1a6b3a'],
+        'received'   => ['Получен',     '#7c7c7c'],
+        'cancelled'  => ['Отменён',     '#7a1a1a'],
     ][$s] ?? [$s, '#888'];
 }
 
@@ -76,12 +41,10 @@ include ROOT . '/includes/header.php';
             <span>Заказ №<?= (int)$order['id'] ?></span>
         </nav>
 
-        <!-- Шапка заказа -->
         <div class="order-detail__header">
             <h1 class="orders-title">Заказ №<?= (int)$order['id'] ?></h1>
         </div>
 
-        <!-- Мета-инфо -->
         <div class="order-detail__meta">
             <div class="order-meta-item">
                 <div class="order-meta-item__label">Дата заказа</div>
@@ -89,6 +52,15 @@ include ROOT . '/includes/header.php';
                     <?= date('d.m.Y в H:i', strtotime($order['created_at'])) ?>
                 </div>
             </div>
+            <?php if (!empty($order['customer_name'])): ?>
+            <div class="order-meta-item">
+                <div class="order-meta-item__label">Получатель</div>
+                <div class="order-meta-item__value">
+                    <?= e($order['customer_name']) ?><br>
+                    <small><?= e($order['customer_phone'] ?? '') ?></small>
+                </div>
+            </div>
+            <?php endif; ?>
             <div class="order-meta-item">
                 <div class="order-meta-item__label">Сумма заказа</div>
                 <div class="order-meta-item__value order-meta-item__value--price">
@@ -103,18 +75,16 @@ include ROOT . '/includes/header.php';
             </div>
         </div>
 
-        <!-- Товары -->
         <h2 class="order-detail__subtitle">Состав заказа</h2>
 
         <div class="order-items">
-            <?php foreach ($items as $item):
+            <?php foreach ($order['items'] as $item):
                 $img = !empty($item['img'])
                     ? UPLOAD_URL . htmlspecialchars($item['img'])
                     : '/img/placeholder.jpg';
             ?>
                 <div class="order-item">
-                    <a href="/product.php?id=<?= (int)$item['product_id'] ?>"
-                       class="order-item__img">
+                    <a href="/product.php?id=<?= (int)$item['product_id'] ?>" class="order-item__img">
                         <img src="<?= $img ?>" alt="<?= e($item['name']) ?>">
                     </a>
                     <div class="order-item__info">
@@ -132,7 +102,6 @@ include ROOT . '/includes/header.php';
             <?php endforeach; ?>
         </div>
 
-        <!-- Итого -->
         <div class="order-detail__total">
             <span>Итого</span>
             <span>₽ <?= number_format((float)$order['total'], 0, '.', ' ') ?></span>

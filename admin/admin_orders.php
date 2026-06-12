@@ -2,6 +2,7 @@
 define('ROOT', dirname(__DIR__));
 require_once ROOT . '/config/db.php';
 require_once ROOT . '/includes/security.php';
+require_once ROOT . '/includes/orders.php';
 
 session_start_safe();
 require_admin();
@@ -12,19 +13,28 @@ $pdo = db();
 $statuses = $pdo->query('SELECT id, name FROM order_statuses ORDER BY id')->fetchAll();
 
 $statusLabels = [
-    'pending'    => 'Принят',
     'processing' => 'В обработке',
-    'shipped'    => 'Отправлен',
-    'delivered'  => 'Доставлен',
+    'accepted'   => 'Принят',
+    'assembled'  => 'Собран',
+    'received'   => 'Получен',
     'cancelled'  => 'Отменён',
 ];
 $statusColors = [
-    'pending'    => 'badge--warning',
     'processing' => 'badge--info',
-    'shipped'    => 'badge--primary',
-    'delivered'  => 'badge--success',
+    'accepted'   => 'badge--warning',
+    'assembled'  => 'badge--primary',
+    'received'   => 'badge--success',
     'cancelled'  => 'badge--danger',
 ];
+$statuses = order_get_statuses();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id'], $_POST['status_id'])) {
+    order_update_status((int)$_POST['order_id'], (int)$_POST['status_id']);
+    header('Location: /admin/orders.php');
+    exit;
+}
+
+$orders = order_get_all();
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -96,7 +106,6 @@ function renderOrders(orders) {
         var badge  = STATUS_COLORS[o.status]  || 'badge--secondary';
         var label  = STATUS_LABELS[o.status]  || o.status;
 
-        // Дропдаун статусов
         var select = '<select class="order-status-select" data-order-id="' + o.id + '">';
         $.each(STATUSES, function(j, s) {
             select += '<option value="' + s.id + '"'
@@ -123,7 +132,7 @@ function renderOrders(orders) {
 
 function loadOrders() {
     $.ajax({
-        url: '/api/admin_orders.php',
+        url: '/api/admin_orders_api.php',
         method: 'GET',
         dataType: 'json',
         success: function(res) {
@@ -140,7 +149,6 @@ function loadOrders() {
     });
 }
 
-// Смена статуса
 $(document).on('change', '.order-status-select', function() {
     var $sel     = $(this);
     var orderId  = $sel.data('order-id');
@@ -155,7 +163,6 @@ $(document).on('change', '.order-status-select', function() {
         data: { order_id: orderId, status_id: statusId },
         success: function(res) {
             if (res.success) {
-                // Обновляем бейдж в строке без перезагрузки всей таблицы
                 var $row   = $('#order-row-' + orderId);
                 var badge  = STATUS_COLORS[res.status_name]  || 'badge--secondary';
                 var label  = STATUS_LABELS[res.status_name]  || res.status_name;
