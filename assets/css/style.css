@@ -887,8 +887,7 @@ a {
     color: var(--header-bg);
 }
 .auth-btn--outline:hover {
-    background: var(--header-bg);
-    color: var(--header-text);
+    transform: scale(1.01);
 }
 .auth-btn--ghost {
     background: transparent;
@@ -1044,8 +1043,7 @@ a {
     transition: background 0.2s, transform 0.15s;
 }
 .empty-state__btn:hover {
-    background: #550000;
-    transform: translateY(-1px);
+    transform: scale(1.02);
 }
 
 /* Бейдж корзины */
@@ -1297,8 +1295,7 @@ a {
     transition: background 0.2s, transform 0.15s;
 }
 .cart-checkout-btn:hover {
-    background: #550000;
-    transform: translateY(-1px);
+    transform: scale(1.02);
 }
 
 /* =============================================
