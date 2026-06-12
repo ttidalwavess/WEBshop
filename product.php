@@ -134,18 +134,25 @@ include ROOT . '/includes/header.php';
             <!-- Аккордеон -->
             <div class="accordion">
                 <div class="accordion-item">
-                    <button class="accordion-trigger">описание <span class="accordion-icon">+</span></button>
+                    <button class="accordion-trigger">
+                        описание <span class="accordion-icon">+</span>
+                    </button>
                     <div class="accordion-body">
-                        <p><?= htmlspecialchars($product['description'] ?? 'Описание отсутствует.') ?></p>
+                        <p><?= htmlspecialchars($product['description'] ?? 'Описание отсутствует.', ENT_QUOTES, 'UTF-8') ?></p>
                     </div>
                 </div>
                 <div class="accordion-item">
-                    <button class="accordion-trigger">доставка и возврат <span class="accordion-icon">+</span></button>
+                    <button class="accordion-trigger">
+                        уход за товаром<span class="accordion-icon">+</span>
+                    </button>
                     <div class="accordion-body">
-                        <p>Доставка по России от 3 до 7 рабочих дней. Возврат в течение 14 дней.</p>
+                        <p>Чтобы изделие радовало вас как можно дольше, соблюдайте базовые правила ухода:
+                            берегите его от прямых солнечных лучей и источников тепла,
+                            избегайте контакта с агрессивными жидкостями и парфюмом.</p>
                     </div>
                 </div>
             </div>
+            
         </div>
     </div>
 </main>
