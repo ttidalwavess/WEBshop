@@ -61,6 +61,134 @@ $(function () {
         });
     });
 
+    // ── Функция форматирования цены ───────────────────────────
+    function formatPrice(price) {
+        return Math.round(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+
+    // ── Пересчёт общей суммы в корзине ────────────────────────
+    function recalcCartTotal() {
+        var total = 0;
+        $('.cart-item').each(function() {
+            var $item = $(this);
+            var price = parseFloat($item.find('.cart-item__price').data('price'));
+            var qty = parseInt($item.find('.qty-value').text());
+            if (!isNaN(price) && !isNaN(qty)) {
+                total += price * qty;
+            }
+        });
+        $('#summary-total, #summary-final').text('₽ ' + formatPrice(total));
+    }
+
+    // ── Обновление суммы в правой колонке для товара ──────────
+    function updateSummaryItem(cartId, newQuantity, price) {
+        var $summaryItem = $('.cart-summary__item[data-cart-id="' + cartId + '"]');
+        if ($summaryItem.length) {
+            var newTotal = price * newQuantity;
+            $summaryItem.find('.cart-summary__item-price').text('₽ ' + formatPrice(newTotal));
+        }
+    }
+
+    // ── Обновление количества товаров в заголовке ─────────────
+    function updateCartItemsCount() {
+        var count = $('.cart-item').length;
+        $('.cart-title__count').text('(' + count + ')');
+        if (count === 0) {
+            location.reload();
+        }
+    }
+
+    // ── Обработчик кнопок + и - в корзине ─────────────────────
+    $(document).on('click', '.qty-plus, .qty-minus', function(e) {
+        e.preventDefault();
+        
+        var $btn = $(this);
+        var cartId = $btn.data('cart-id');
+        var $cartItem = $btn.closest('.cart-item');
+        var $qtySpan = $cartItem.find('.qty-value');
+        var currentQty = parseInt($qtySpan.text());
+        var newQty = currentQty;
+        
+        if ($btn.hasClass('qty-plus')) {
+            newQty = currentQty + 1;
+        } else if ($btn.hasClass('qty-minus')) {
+            newQty = Math.max(1, currentQty - 1);
+        }
+        
+        if (newQty === currentQty) return;
+        
+        // Блокируем кнопки на время запроса
+        $('.qty-btn').prop('disabled', true);
+        
+        $.ajax({
+            url: '/api/cart/update.php',
+            method: 'POST',
+            dataType: 'json',
+            data: { cart_id: cartId, qty: newQty },
+            success: function(response) {
+                if (response.success) {
+                    // Обновляем количество на странице
+                    $qtySpan.text(response.new_quantity);
+                    
+                    // Обновляем цену строки
+                    var $priceSpan = $cartItem.find('.cart-item__price');
+                    var price = parseFloat($priceSpan.data('price'));
+                    var newRowPrice = price * response.new_quantity;
+                    $priceSpan.text('₽ ' + formatPrice(newRowPrice));
+                    
+                    // Обновляем итоговую колонку
+                    updateSummaryItem(cartId, response.new_quantity, price);
+                    
+                    // Пересчитываем общую сумму
+                    recalcCartTotal();
+                    
+                    // Обновляем бейдж корзины
+                    updateCartBadge(response.cart_count);
+                } else {
+                    alert(response.error || 'Ошибка при обновлении');
+                }
+                $('.qty-btn').prop('disabled', false);
+            },
+            error: function(xhr) {
+                console.error('Ошибка:', xhr.responseText);
+                alert('Ошибка при обновлении количества');
+                $('.qty-btn').prop('disabled', false);
+            }
+        });
+    });
+
+    // ── Обработчик удаления товара из корзины ─────────────────
+    $(document).on('click', '.cart-item__remove', function() {
+        var cartId = $(this).data('cart-id');
+        var $item = $(this).closest('.cart-item');
+        
+        if (!confirm('Удалить товар из корзины?')) return;
+        
+        $.ajax({
+            url: '/api/cart/remove.php',
+            method: 'POST',
+            dataType: 'json',
+            data: { cart_id: cartId },
+            success: function(response) {
+                if (response.success) {
+                    $item.fadeOut(300, function() {
+                        $(this).remove();
+                        $('.cart-summary__item[data-cart-id="' + cartId + '"]').remove();
+                        recalcCartTotal();
+                        updateCartItemsCount();
+                        updateCartBadge(response.cart_count);
+                    });
+                } else {
+                    alert(response.error || 'Ошибка при удалении');
+                }
+            },
+            error: function(xhr) {
+                console.error('Ошибка:', xhr.responseText);
+                alert('Ошибка при удалении товара');
+            }
+        });
+    });
+
     // ── Обновление бейджа корзины ────────────────────────────
     function updateCartBadge(count) {
         var $badge = $('#cart-count');

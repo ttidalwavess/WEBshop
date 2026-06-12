@@ -14,7 +14,7 @@ function order_create_from_cart(int $user_id, string $customer_name, string $cus
         
         // 1. Получаем товары из корзины пользователя
         $stmt = $pdo->prepare("
-            SELECT c.product_id, c.quantity, p.price
+            SELECT c.product_id, c.quantity, c.size, p.price, p.name
             FROM cart c
             JOIN products p ON p.id = c.product_id
             WHERE c.user_id = ?
@@ -65,8 +65,8 @@ function order_create_from_cart(int $user_id, string $customer_name, string $cus
         
     } catch (Exception $e) {
         $pdo->rollBack();
-        error_log($e->getMessage());
-        return ['error' => 'Ошибка при создании заказа'];
+        error_log('Order creation error: ' . $e->getMessage());
+        return ['error' => 'Ошибка при создании заказа: ' . $e->getMessage()];
     }
 }
 
@@ -146,7 +146,7 @@ function order_get_all(int $limit = 100): array
     
     $pdo = db();
     
-    $stmt = $pdo->query("
+    $stmt = $pdo->prepare("
         SELECT 
             o.id,
             o.total,
@@ -165,8 +165,9 @@ function order_get_all(int $limit = 100): array
         LEFT JOIN products p ON p.id = oi.product_id
         GROUP BY o.id
         ORDER BY o.created_at DESC
-        LIMIT {$limit}
+        LIMIT ?
     ");
+    $stmt->execute([$limit]);
     
     return $stmt->fetchAll();
 }

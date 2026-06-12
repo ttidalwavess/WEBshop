@@ -1,5 +1,5 @@
 <?php
-//define('ROOT', dirname(__DIR__, 2));
+define('ROOT', dirname(__DIR__, 2));
 require_once ROOT . '/config/db.php';
 require_once ROOT . '/includes/security.php';
 
@@ -22,6 +22,7 @@ $pdo = db();
 $user_id = $_SESSION['user_id'];
 
 try {
+    // Проверяем, что товар в корзине принадлежит текущему пользователю
     $stmt = $pdo->prepare("SELECT id FROM cart WHERE id = ? AND user_id = ?");
     $stmt->execute([$cart_id, $user_id]);
     if (!$stmt->fetch()) {
@@ -29,15 +30,17 @@ try {
         exit;
     }
 
+    // Удаляем товар
     $stmt = $pdo->prepare("DELETE FROM cart WHERE id = ?");
     $stmt->execute([$cart_id]);
 
-    $stmt = $pdo->prepare("SELECT SUM(quantity) as total FROM cart WHERE user_id = ?");
+    // Получаем общее количество товаров в корзине
+    $stmt = $pdo->prepare("SELECT COALESCE(SUM(quantity), 0) as total FROM cart WHERE user_id = ?");
     $stmt->execute([$user_id]);
     $cart_count = (int)($stmt->fetch()['total'] ?? 0);
 
     echo json_encode(['success' => true, 'cart_count' => $cart_count]);
 } catch (PDOException $e) {
     error_log($e->getMessage());
-    echo json_encode(['success' => false, 'error' => 'Ошибка базы данных']);
+    echo json_encode(['success' => false, 'error' => 'Ошибка базы данных: ' . $e->getMessage()]);
 }

@@ -50,20 +50,19 @@ if (!defined('ROOT')) die('Direct access forbidden');
     <div class="copyright">
         © <?= date('Y') ?> LIGHT — Светлая сторона стиля.
     </div>
-</footer>
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
         crossorigin="anonymous"></script>
 
-<script src="/assets/js/carousel.js"></script>
-<script src="/assets/js/cart.js"></script>
+    <script src="/assets/js/carousel.js"></script>
+    <script src="/assets/js/cart.js"></script>
 
-<?php if (!empty($extra_js)): ?>
-    <?php foreach ($extra_js as $js): ?>
-        <script src="<?= htmlspecialchars($js) ?>"></script>
-    <?php endforeach; ?>
-<?php endif; ?>
-
+    <?php if (!empty($extra_js)): ?>
+        <?php foreach ($extra_js as $js): ?>
+            <script src="<?= htmlspecialchars($js) ?>"></script>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</footer>
 </body>
 </html>

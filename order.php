@@ -25,6 +25,14 @@ if (!$order) {
     exit;
 }
 
+$status_labels = [
+    'pending' => 'Принят',
+    'processing' => 'В обработке',
+    'shipped' => 'Отправлен',
+    'delivered' => 'Доставлен',
+    'cancelled' => 'Отменён'
+];
+
 $page_title = 'LIGHT | Заказ №' . $order['id'];
 include ROOT . '/includes/header.php';
 ?>
@@ -64,16 +72,7 @@ include ROOT . '/includes/header.php';
             <div class="order-meta-item">
                 <div class="order-meta-item__label">Статус</div>
                 <div class="order-meta-item__value">
-                    <?php
-                    $status_labels = [
-                        'pending' => 'Принят',
-                        'processing' => 'В обработке',
-                        'shipped' => 'Отправлен',
-                        'delivered' => 'Доставлен',
-                        'cancelled' => 'Отменён'
-                    ];
-                    echo $status_labels[$order['status']] ?? $order['status'];
-                    ?>
+                    <?= $status_labels[$order['status']] ?? $order['status'] ?>
                 </div>
             </div>
         </div>
@@ -111,7 +110,7 @@ include ROOT . '/includes/header.php';
             <span>₽ <?= number_format((float)$order['total'], 0, '.', ' ') ?></span>
         </div>
 
-        <a href="/orders.php" class="orders-back">Назад к заказам</a>
+        <a href="/orders.php" class="orders-back">← Назад к заказам</a>
     </div>
 </main>
 

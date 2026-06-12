@@ -18,8 +18,8 @@ $success = false;
 
 // Получаем товары из корзины для отображения
 $stmt = $pdo->prepare("
-    SELECT c.id AS cart_id, c.quantity, c.product_id,
-           p.name, p.price, p.size,
+    SELECT c.id AS cart_id, c.quantity, c.product_id, c.size,
+           p.name, p.price,
            pi.filename AS img
     FROM cart c
     JOIN products p ON p.id = c.product_id
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (mb_strlen($phone) < 7) {
         $error = 'Укажите номер телефона.';
     } else {
-        // СОЗДАЁМ ЗАКАЗ из корзины (ФИО и телефон сохраняются ТОЛЬКО в orders)
+        // СОЗДАЁМ ЗАКАЗ из корзины
         $result = order_create_from_cart($_SESSION['user_id'], $name, $phone);
         
         if (isset($result['error'])) {
@@ -76,7 +76,8 @@ include ROOT . '/includes/header.php';
                 </div>
                 <h1 class="checkout-success__title">Заказ оформлен!</h1>
                 <p class="checkout-success__text">
-                    Мы получили ваш заказ №<?= $_SESSION['last_order_id'] ?? '' ?> и скоро свяжемся с вами.
+                    Спасибо за заказ! Мы свяжемся с вами в ближайшее время для подтверждения.<br>
+                    Номер вашего заказа: <strong>№<?= $_SESSION['last_order_id'] ?? '' ?></strong>
                 </p>
                 <a href="/orders.php" class="empty-state__btn">Мои заказы</a>
                 <a href="/index.php" class="checkout-success__link">Вернуться на главную</a>
@@ -115,13 +116,13 @@ include ROOT . '/includes/header.php';
                         <h2 class="checkout-section__title">Самовывоз</h2>
                         <div class="checkout-info-block">
                             <div class="checkout-info-block__row">
-                                <span>Владивосток, ул. Аллилуева, 12А</span>
+                                <span>📍 Владивосток, ул. Аллилуева, 12А</span>
                             </div>
                             <div class="checkout-info-block__row">
-                                <span>Оплата в магазине при получении</span>
+                                <span>💰 Оплата в магазине при получении</span>
                             </div>
                             <div class="checkout-info-block__row checkout-info-block__row--accent">
-                                <span>Заказ будет готов в течение часа</span>
+                                <span>⏱ Заказ будет готов в течение часа</span>
                             </div>
                         </div>
                     </div>

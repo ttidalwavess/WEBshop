@@ -32,7 +32,7 @@ include ROOT . '/includes/header.php';
                         <line x1="9" y1="16" x2="13" y2="16"/>
                     </svg>
                 </div>
-                <p class="empty-state__text">Заказов пока нет</p>
+                <p class="empty-state__text">У вас пока нет заказов</p>
                 <a href="/catalog.php" class="empty-state__btn">Перейти в каталог</a>
             </div>
         <?php else: ?>
