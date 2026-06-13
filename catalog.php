@@ -51,7 +51,6 @@ include ROOT . '/includes/header.php';
             <span><?= htmlspecialchars($title, ENT_QUOTES, 'UTF-8') ?></span>
         </nav>
 
-        <!-- Заголовок каталога -->
         <div class="catalog-header">
             <h1 class="catalog-title"><?= htmlspecialchars($title, ENT_QUOTES, 'UTF-8') ?></h1>
             <span class="catalog-count"><?= count($products) ?> <?php
@@ -67,7 +66,7 @@ include ROOT . '/includes/header.php';
             <p class="catalog-empty">Товары появятся совсем скоро.</p>
         <?php else: ?>
             <div class="catalog-grid">
-                <?php foreach ($products as $p): render_product_card($p, $from); endforeach; ?>
+                <?php foreach ($products as $p): render_product_card($p); endforeach; ?>
             </div>
         <?php endif; ?>
 

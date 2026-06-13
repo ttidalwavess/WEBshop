@@ -12,7 +12,6 @@ $pdo = db();
 $error   = '';
 $success = false;
 
-// Получаем корзину
 $stmt = $pdo->prepare("
     SELECT c.id AS cart_id, c.quantity, c.product_id, c.size,
            p.name, p.price,
@@ -43,7 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!preg_match('/^[\d\s\+\-\(\)]{7,20}$/', $phone)) {
     $error = 'Введите корректный номер телефона.';
     } else {
-        // Логика подруги
         $result = order_create_from_cart($_SESSION['user_id'], $name, $phone);
 
         if (isset($result['error'])) {

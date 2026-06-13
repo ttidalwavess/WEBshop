@@ -9,7 +9,6 @@ if (!is_logged_in()) { header('Location: /login_required.php'); exit; }
 
 $pdo = db();
 
-// Корзина из БД — версия подруги с полем size
 $stmt = $pdo->prepare("
     SELECT c.id AS cart_id, c.quantity, c.product_id, c.size,
            p.name, p.price,
@@ -152,7 +151,7 @@ $(function () {
         var newQty  = Math.max(1, current + ($btn.hasClass('qty-plus') ? 1 : -1));
 
         $.ajax({
-            url: '/api/cart_update.php',
+            url: '/api/cart/update.php',
             method: 'POST',
             dataType: 'json',
             data: { cart_id: cartId, qty: newQty },
@@ -173,7 +172,7 @@ $(function () {
         var $item  = $(this).closest('.cart-item');
 
         $.ajax({
-            url: '/api/cart_remove.php',
+            url: '/api/cart/remove.php',
             method: 'POST',
             dataType: 'json',
             data: { cart_id: cartId },

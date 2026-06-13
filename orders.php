@@ -8,7 +8,6 @@ session_start_safe();
 
 if (!is_logged_in()) { header('Location: /login_required.php'); exit; }
 
-// Логика подруги — получаем заказы из БД
 $orders = order_get_by_user($_SESSION['user_id']);
 
 function status_label(string $s): array {

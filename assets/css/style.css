@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
-/* ---- RESET ---- */
 *, *::before, *::after {
     margin: 0;
     padding: 0;
@@ -118,7 +117,6 @@ a {
     transform: scale(1.1);
 }
 
-/* Бургер-кнопка — скрыта на десктопе */
 .nav-toggle {
     display: none;
     flex-direction: column;
@@ -687,11 +685,6 @@ a {
 }
 .btn-add-cart:hover { transform: scale(1.02); }
 
-/*@media (max-width: 1920px) {
-    .product-gallery { position: static; }
-    .btn-add-cart { width: 100%; }
-}*/
-
 .accordion {
     border-top: 1px solid #EBE4DA;
 }
@@ -930,7 +923,7 @@ a {
 }
 .alert--success {
     background: #f0fdf4;
-    border: 1px solid rgba(39, 174, 96, 0.3);
+    border: 1px solid #27ae604d;
     color: #27ae60;
 }
 

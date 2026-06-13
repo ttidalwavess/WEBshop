@@ -26,7 +26,6 @@ $pdo = db();
 $pdo->prepare('UPDATE orders SET status_id = ? WHERE id = ?')
     ->execute([$statusId, $orderId]);
 
-// Возвращаем новое имя статуса для обновления бейджа
 $stmt = $pdo->prepare('SELECT name FROM order_statuses WHERE id = ? LIMIT 1');
 $stmt->execute([$statusId]);
 $statusName = $stmt->fetchColumn();

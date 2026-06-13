@@ -1,8 +1,4 @@
-/**
- * product.js — логика страницы карточки товара
- */
 $(function () {
-    // Переключение главного фото
     $(document).on('click', '.product-gallery__thumb', function () {
         var newSrc = $(this).data('src');
         $('#main-product-img').attr('src', newSrc);
@@ -10,13 +6,11 @@ $(function () {
         $(this).addClass('active');
     });
 
-    // Выбор размера
     $(document).on('click', '.size-btn', function () {
         $('.size-btn').removeClass('active');
         $(this).addClass('active');
     });
 
-    // Аккордеон
     $(document).on('click', '.accordion-trigger', function () {
         var $item = $(this).closest('.accordion-item');
         var $body = $item.find('.accordion-body');

@@ -1,14 +1,9 @@
-/**
- * cart.js — AJAX-корзина
- * Требует jQuery.
- */
-
-// ── Модалка незалогиненного ──────────────────────────────
+//Модалка незалогиненного
 function showLoginModal() {
     $('#login-modal').remove();
     $('body').append(
         '<div id="login-modal" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10000;display:flex;align-items:center;justify-content:center">' +
-            '<div style="background:#fff;border-radius:16px;padding:2.5rem 2rem;max-width:370px;width:90%;text-align:center">' +
+            '<div style="background:#fff;border-radius:16px;padding:2.5rem 2rem;max-width:380px;width:90%;text-align:center">' +
                 '<p style="font-size:1.1rem;font-weight:700;margin-bottom:0.8rem">Вы не вошли в аккаунт</p>' +
                 '<p style="font-size:0.88rem;color:#666;margin-bottom:1.8rem">Войдите, чтобы добавлять товары в корзину</p>' +
                 '<a href="/login.php" style="display:block;padding:14px;background:#330000;color:#fff;border-radius:8px;font-weight:700;text-decoration:none;margin-bottom:0.8rem">Войти</a>' +
@@ -21,7 +16,7 @@ function showLoginModal() {
     });
 }
 
-// ── Модалка выбора размера (для каталога) ───────────────
+//Модалка выбора размера (для каталога)
 function showSizeModal(productId, productName, $btn) {
     $('#size-modal').remove();
 
@@ -33,7 +28,7 @@ function showSizeModal(productId, productName, $btn) {
 
     $('body').append(
         '<div id="size-modal" style="position:fixed;inset:0;background:#00000073;z-index:10000;display:flex;align-items:center;justify-content:center">' +
-            '<div style="background:#fff;border-radius:16px;padding:2rem;max-width:370px;width:90%;font-family:Montserrat,sans-serif;text-align:center">' +
+            '<div style="background:#fff;border-radius:16px;padding:2rem;max-width:380px;width:90%;font-family:Montserrat,sans-serif;text-align:center">' +
                 '<p style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;opacity:0.45;margin-bottom:0.4rem">Добавить в корзину</p>' +
                 '<p style="font-size:1rem;font-weight:700;color:#1A1A1A;margin-bottom:1.5rem">' + productName + '</p>' +
                 '<p style="font-size:0.8rem;font-weight:600;opacity:0.5;margin-bottom:0.7rem">выберите размер</p>' +
@@ -70,7 +65,7 @@ function showSizeModal(productId, productName, $btn) {
     });
 }
 
-// ── Отправка в корзину ───────────────────────────────────
+//Отправка в корзину
 function doAddToCart($btn, productId, size) {
     $btn.prop('disabled', true);
     $.ajax({
@@ -97,7 +92,7 @@ function doAddToCart($btn, productId, size) {
     });
 }
 
-// ── Обновление бейджа корзины ────────────────────────────
+//Обновление бейджа корзины
 function updateCartBadge(count) {
     var $badge = $('#cart-count');
     count > 0 ? $badge.text(count).show() : $badge.hide();
@@ -105,7 +100,7 @@ function updateCartBadge(count) {
 
 $(function () {
 
-    // ── Добавление в корзину ─────────────────────────────────
+    //Добавление в корзину
     $(document).on('click', '.btn-add-to-cart', function(e) {
         e.preventDefault();
 
@@ -133,19 +128,19 @@ $(function () {
 
         var size = $btn.data('size') || '';
         if (!size || size === 'Универсальный') {
-        doAddToCart($btn, productId, 'Универсальный');
-        return;
-    }
+            doAddToCart($btn, productId, 'Универсальный');
+            return;
+        }
 
         showSizeModal(productId, productName, $btn);
     });
 
-    // ── Форматирование цены ──────────────────────────────────
+    //Форматирование цены
     function formatPrice(price) {
         return Math.round(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
     }
 
-    // ── Пересчёт суммы в корзине ─────────────────────────────
+    //Пересчёт суммы в корзине
     function recalcCartTotal() {
         var total = 0;
         $('.cart-item').each(function() {
@@ -167,7 +162,7 @@ $(function () {
         if (n === 0) location.reload();
     }
 
-    // ── +/- количество ───────────────────────────────────────
+    //+/- количество
     $(document).on('click', '.qty-plus, .qty-minus', function(e) {
         e.preventDefault();
         var $btn     = $(this);
@@ -200,7 +195,7 @@ $(function () {
         });
     });
 
-    // ── Удаление товара ──────────────────────────────────────
+    //Удаление товара
     $(document).on('click', '.cart-item__remove', function() {
         var cartId = $(this).data('cart-id');
         var $item  = $(this).closest('.cart-item');
@@ -224,7 +219,7 @@ $(function () {
         });
     });
 
-    // ── Бургер-меню ──────────────────────────────────────────
+    //Бургер-меню
     $(document).on('click', '#navToggle', function() {
         $('.nav-center').toggleClass('open');
         $('.header-icons').toggleClass('open');

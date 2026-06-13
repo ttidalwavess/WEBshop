@@ -90,11 +90,11 @@ CREATE TABLE `order_statuses` (
 --
 
 INSERT INTO `order_statuses` (`id`, `name`) VALUES
-(5, 'cancelled'),
-(4, 'delivered'),
-(1, 'pending'),
+(1, 'accepted'),
 (2, 'processing'),
-(3, 'shipped');
+(3, 'assembled'),
+(5, 'received'),
+(6, 'cancelled');
 
 -- --------------------------------------------------------
 

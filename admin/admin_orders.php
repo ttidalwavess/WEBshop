@@ -9,7 +9,6 @@ require_admin();
 
 $pdo = db();
 
-// Получаем все статусы для дропдауна
 $statuses = $pdo->query('SELECT id, name FROM order_statuses ORDER BY id')->fetchAll();
 
 $statusLabels = [
@@ -61,7 +60,7 @@ $orders = order_get_all();
         <span id="last-update" style="font-size:0.75rem;opacity:0.4;margin-left:auto"></span>
     </div>
 
-    <div class="admin-card" style="padding:0;overflow:hidden">
+    <div class="admin-card" style="padding:0;overflow-x:auto;-webkit-overflow-scrolling:touch;">
         <table class="admin-table" id="orders-table">
             <thead>
                 <tr>
@@ -87,6 +86,7 @@ $orders = order_get_all();
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
         crossorigin="anonymous"></script>
+<script src="/admin/assets/js/admin.js"></script>
 
 <script>
 var STATUS_LABELS = <?= json_encode($statusLabels) ?>;

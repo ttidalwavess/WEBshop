@@ -1,11 +1,8 @@
-// admin/assets/js/admin.js
-
 $(function () {
 
-    // ── Flash-сообщения ──────────────────────────────────────
     setTimeout(function () { $('.alert').fadeOut(400); }, 5000);
 
-    // ── Превью файла ─────────────────────────────────────────
+    //Превью файла
     $('input[type="file"][accept*="image"]').on('change', function () {
         var file = this.files[0];
         if (!file) return;
@@ -18,7 +15,7 @@ $(function () {
         reader.readAsDataURL(file);
     });
 
-    // ── Мобильное меню (гамбургер) ───────────────────────────
+    //Мобильное меню (гамбургер)
     var $sidebar  = $('#admin-sidebar');
     var $overlay  = $('#sidebar-overlay');
     var $burger   = $('#sidebar-toggle');
@@ -37,7 +34,6 @@ $(function () {
         $overlay.removeClass('is-visible');
         $burger.removeClass('is-open');
         $('body').css('overflow', '');
-        // убрать display после анимации
         setTimeout(function () {
             if (!$overlay.hasClass('is-visible')) {
                 $overlay.css('display', 'none');
@@ -58,7 +54,6 @@ $(function () {
         if (e.key === 'Escape') closeSidebar();
     });
 
-    // закрывать при клике на ссылку в мобильном меню
     $sidebar.find('.admin-nav__item').on('click', function () {
         closeSidebar();
     });

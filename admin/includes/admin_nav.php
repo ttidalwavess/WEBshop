@@ -4,7 +4,6 @@ if (!defined('ADMIN_NAV_INCLUDED')) {
 }
 $currentPage = basename($_SERVER['PHP_SELF']);
 ?>
-<!-- Mobile topbar -->
 <header class="admin-topbar">
     <button class="admin-topbar__burger" id="sidebar-toggle" aria-label="Меню">
         <span></span>
@@ -14,7 +13,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     <span class="admin-topbar__logo">Панель</span>
 </header>
 
-<!-- Overlay -->
 <div class="admin-sidebar-overlay" id="sidebar-overlay"></div>
 
 <aside class="admin-sidebar" id="admin-sidebar">

@@ -14,10 +14,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = input_int('id');
 
     if ($action === 'create' || $action === 'update') {
-        if ($result = ($action === 'create')) {
-            category_create(input_str('name'), input_int('sort_order'));
+        if ($action === 'create') {
+            $result = category_create(input_str('name'), input_int('sort_order'));
         } else {
-            category_update($id, input_str('name'), input_int('sort_order'));
+            $result = category_update($id, input_str('name'), input_int('sort_order'));
         }
         $error   = $result['error'] ?? '';
         $message = $error ? '' : ($action === 'create' ? 'Категория создана.' : 'Категория обновлена.');

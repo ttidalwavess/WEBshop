@@ -1,10 +1,6 @@
 <?php
-// includes/orders.php
 require_once __DIR__ . '/../config/db.php';
 
-/**
- * Создание заказа из корзины пользователя
- */
 function order_create_from_cart(int $user_id, string $customer_name, string $customer_phone): array
 {
     $pdo = db();
@@ -61,7 +57,7 @@ function order_create_from_cart(int $user_id, string $customer_name, string $cus
         
         $pdo->commit();
         
-        return ['success' => true, 'order_id' => $order_id];
+        return ['ok' => true, 'order_id' => $order_id];
         
     } catch (Exception $e) {
         $pdo->rollBack();

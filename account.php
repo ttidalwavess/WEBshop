@@ -6,7 +6,6 @@ require_once ROOT . '/includes/security.php';
 session_start_safe();
 require_login('/login.php');
 
-// Получаем данные пользователя из БД
 $pdo  = db();
 $stmt = $pdo->prepare('SELECT username, email, created_at FROM users WHERE id = ? LIMIT 1');
 $stmt->execute([$_SESSION['user_id']]);

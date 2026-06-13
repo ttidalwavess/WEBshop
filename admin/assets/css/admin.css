@@ -1,7 +1,3 @@
-/* =============================================
-   Админ-панель | admin.css
-   ============================================= */
-
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
@@ -222,6 +218,13 @@ a { text-decoration: none; color: inherit; }
     border: 1px solid var(--admin-border);
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.admin-card > *:not(table) {
+    padding: 1.5rem;
+}
+.admin-card > h2 {
+    padding: 1.5rem 1.5rem 0;
 }
 .admin-card h2 {
     font-size: 0.72rem;
@@ -307,7 +310,7 @@ a { text-decoration: none; color: inherit; }
     width: 100%;
     border-collapse: collapse;
     font-size: 0.84rem;
-    min-width: 780px;
+    min-width: 700px;
 }
 /* Для простых таблиц без много колонок — без горизонтального скролла */
 .admin-table--simple {
@@ -692,7 +695,11 @@ a { text-decoration: none; color: inherit; }
 /* 600px — single column stats */
 @media (max-width: 600px) {
     .stats-grid { grid-template-columns: 1fr 1fr; gap: 0.7rem; }
-    .stat-card { padding: 1rem 1.1rem; }
+    .stat-card { 
+        padding: 1rem 1.1rem; 
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
     .stat-card__value { font-size: 1.7rem; }
     .admin-main { padding: 0.9rem; }
     .admin-card { padding: 1.1rem; }
@@ -701,4 +708,9 @@ a { text-decoration: none; color: inherit; }
 
 @media (max-width: 400px) {
     .stats-grid { grid-template-columns: 1fr; }
+}
+
+#orders-table,
+.admin-table {
+    min-width: 750px !important;
 }

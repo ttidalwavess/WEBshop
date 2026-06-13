@@ -17,12 +17,12 @@ function db(): PDO {
         $options = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES   => false,   // настоящие prepared statements
+            PDO::ATTR_EMULATE_PREPARES   => false,
         ];
         try {
             $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
         } catch (PDOException $e) {
-            // В продакшне — не показывать детали ошибки пользователю
+            
             error_log($e->getMessage());
             die('Database connection error. Please try again later.');
         }

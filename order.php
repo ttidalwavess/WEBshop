@@ -11,7 +11,6 @@ if (!is_logged_in()) { header('Location: /login_required.php'); exit; }
 $order_id = (int)($_GET['id'] ?? 0);
 if ($order_id <= 0) { header('Location: /orders.php'); exit; }
 
-// Логика подруги
 $order = order_get_details($order_id, $_SESSION['user_id']);
 
 if (!$order) { header('Location: /orders.php'); exit; }

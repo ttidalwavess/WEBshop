@@ -13,7 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($result['error'])) {
         $error = $result['error'];
     } else {
-        header('Location: /index.php'); exit;
+        $redirect = !empty($_GET['from']) && str_starts_with($_GET['from'], '/') ? $_GET['from'] : '/index.php';
+        header('Location: ' . $redirect); exit;
     }
 }
 

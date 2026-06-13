@@ -19,7 +19,7 @@ $current_sale = isset($_GET['sale']);
 <html lang="ru" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=devise-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="user-logged-in" content="<?= is_logged_in() ? '1' : '0' ?>">
     <title><?= e($page_title ?? 'LIGHT | Женская одежда') ?></title>
     <link rel="stylesheet" href="/assets/css/style.css">
@@ -55,6 +55,7 @@ $current_sale = isset($_GET['sale']);
         </a>
     </nav>
 
+        <!-- Заказы -->
         <div class="header-icons">
         <?php $orders_href = is_logged_in() ? '/orders.php' : '/login_required.php'; ?>
         <a href="<?= $orders_href ?>" class="icon-btn" aria-label="Мои заказы">
@@ -97,6 +98,7 @@ $current_sale = isset($_GET['sale']);
             </a>
         <?php endif; ?>
 
+        <!-- Админка -->
         <?php if (is_admin()): ?>
             <a href="/admin/index.php" class="icon-btn" aria-label="Админка">
                 <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
@@ -107,4 +109,3 @@ $current_sale = isset($_GET['sale']);
     </div>
     <button class="nav-toggle" id="navToggle" aria-label="Меню"><span></span><span></span><span></span></button>
 </header>
-</body>

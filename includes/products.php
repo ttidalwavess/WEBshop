@@ -183,13 +183,6 @@ function products_all(int $limit = 50, int $offset = 0): array
     return $stmt->fetchAll();
 }
 
-/**
- * Выводит HTML одной карточки товара.
- * Используется на index.php и catalog.php — один код, не копипаст.
- *
- * $p — строка из products_new(), products_top(), products_by_nav() и т.д.
- * Ожидает поля: id, name, price, category_name, main_image, is_new, is_top.
- */
 function render_product_card(array $p): void
 {
     $id = (int)$p['id'];
@@ -216,11 +209,6 @@ function render_product_card(array $p): void
     <?php
 }
 
-/**
- * Выводит блок карусели с любым массивом товаров.
- * $title — заголовок секции.
- * $products — результат products_new(), products_top() и т.д.
- */
 function render_carousel(string $title, array $products): void
 {
     ?>
@@ -315,7 +303,11 @@ function product_delete(int $id): array
         $path = UPLOAD_DIR . $img['filename'];
         if (file_exists($path)) unlink($path);
     }
-    db()->prepare('DELETE FROM products WHERE id = ?')->execute([$id]);
+    $stmt = db()->prepare('SELECT COUNT(*) FROM order_items WHERE product_id = ?');
+    $stmt->execute([$id]);
+    if ((int)$stmt->fetchColumn() > 0) {
+        return ['error' => 'Нельзя удалить товар, который есть в заказах.'];
+    }
     return ['ok' => true];
 }
 
@@ -339,7 +331,7 @@ function product_image_upload(int $productId, string $fieldName, bool $isMain = 
         return ['error' => 'Допустимые форматы: JPEG, PNG, WebP, GIF.'];
     }
 
-    switch ($mimeType) { // match() — только PHP 8.0, используем switch
+    switch ($mimeType) {
         case 'image/jpeg': $ext = 'jpg';  break;
         case 'image/png': $ext = 'png';  break;
         case 'image/webp': $ext = 'webp'; break;

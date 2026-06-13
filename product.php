@@ -27,8 +27,7 @@ $clothSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 $bagSizes   = ['Большой', 'Средний', 'Маленький'];
 $curSize    = $product['size'] ?? '';
 
-// ── Хлебные крошки ──
-// ── Хлебные крошки ──
+// Хлебные крошки
 $from_cat  = input_str('from_cat',  $_GET);
 $from_slug = input_str('from_slug', $_GET);
 

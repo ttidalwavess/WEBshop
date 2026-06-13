@@ -4,10 +4,8 @@ require_once ROOT . '/includes/security.php';
 
 session_start_safe();
 
-// Если уже залогинен — редиректим на главную
 if (is_logged_in()) { header('Location: /index.php'); exit; }
 
-// Откуда пришёл пользователь — чтобы после входа вернуть обратно
 $from = htmlspecialchars($_GET['from'] ?? '', ENT_QUOTES, 'UTF-8');
 
 $page_title = 'LIGHT | Вход';

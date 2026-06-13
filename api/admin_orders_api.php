@@ -1,5 +1,4 @@
 <?php
-// /api/admin_orders.php — отдаёт список заказов для live-таблицы
 define('ROOT', dirname(__DIR__));
 require_once ROOT . '/config/db.php';
 require_once ROOT . '/includes/security.php';

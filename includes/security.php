@@ -16,20 +16,17 @@ function e(string $str): string {
     return htmlspecialchars($str, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
-/**строка из $_POST / $_GET */
 function input_str(string $key, array $source = []): string {
     $source = $source ?: $_POST;
     $val = $source[$key] ?? '';
     return trim(strip_tags((string)$val));
 }
 
-/** Целое из $_POST / $_GET */
 function input_int(string $key, array $source = []): int {
     $source = $source ?: $_POST;
     return (int)($source[$key] ?? 0);
 }
 
-//тлько +число
 function input_float(string $key, array $source = []): float {
     $source = $source ?: $_POST;
     $val = str_replace(',', '.', (string)($source[$key] ?? '0'));
@@ -61,7 +58,7 @@ function require_admin(): void {
     }
 }
 
-// хэш паролей
+//хэш паролей
 function hash_password(string $plain): string {
     return password_hash($plain, PASSWORD_BCRYPT, ['cost' => 12]);
 }
@@ -84,7 +81,7 @@ function make_slug(string $str): string {
     return trim($str, '-');
 }
 
-// токены
+//токены
 function csrf_token(): string {
     if (empty($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -92,12 +89,12 @@ function csrf_token(): string {
     return $_SESSION['csrf_token'];
 }
 
-// проверка токенов
+//проверка токенов
 function csrf_verify(string $token): bool {
     return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
 }
 
-// вывод токена
+//вывод токена
 function csrf_field(): string {
     return '<input type="hidden" name="csrf_token" value="' . csrf_token() . '">';
 }

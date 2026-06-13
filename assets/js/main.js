@@ -1,10 +1,9 @@
-// assets/js/main.js — общий JS для публичной части
 $(function () {
 
     // Flash-сообщения: скрыть через 4 сек
     setTimeout(function () {
         $('.alert').fadeOut(400);
-    }, 4000);
+    }, 2000);
 
     // Подтверждение опасных действий
     $('[data-confirm]').on('click', function (e) {

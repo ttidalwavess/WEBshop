@@ -17,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($result['error'])) {
         $error = $result['error'];
     } else {
-        // Сразу логиним после регистрации
         auth_login(input_str('username'), $_POST['password'] ?? '');
         header('Location: /index.php'); exit;
     }
