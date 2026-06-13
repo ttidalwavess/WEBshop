@@ -19,6 +19,7 @@ $current_sale = isset($_GET['sale']);
 <html lang="ru" dir="ltr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=devise-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="user-logged-in" content="<?= is_logged_in() ? '1' : '0' ?>">
     <title><?= e($page_title ?? 'LIGHT | Женская одежда') ?></title>
     <link rel="stylesheet" href="/assets/css/style.css">

@@ -12,9 +12,6 @@
     --header-bg:        #330000;
     --header-text:      #E7F0F7;
     --main-text:        #1A1A1A;
-    --accent-blue:      #A2D8F4;
-    --accent-blue-dark: #7bbfe0;
-    --border-light:     #3300001f;
 }
 
 body {
@@ -1944,7 +1941,7 @@ a {
     /* Баннер */
     .banner-placeholder { height: 8vh; min-height: 50px; margin: 1rem 0; }
  
-    /* Карусель — touch-скролл вместо стрелок */
+    /* Карусель*/
     .section-title { font-size: 1.6rem; }
     .product-card { flex: 0 0 170px; width: 170px; }
     .carousel-track { gap: 1.2rem; }
@@ -2012,6 +2009,7 @@ a {
     .product-card { flex: 0 0 155px; width: 155px; }
     .carousel-track { gap: 1rem; }
     .carousel-wrapper { padding: 0 3%; width: 100%; max-width: 100%; }
+    .carousel-btn { display: none; }
  
     /* Каталог */
     .catalog-grid { gap: 0.7rem; }
