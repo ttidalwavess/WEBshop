@@ -17,6 +17,10 @@ $statusLabels = [
     'assembled'  => 'Собран',
     'received'   => 'Получен',
     'cancelled'  => 'Отменён',
+
+    'pending'    => 'В обработке',
+    'shipped'    => 'Принят',
+    'delivered'  => 'Получен',
 ];
 $statusColors = [
     'processing' => 'badge--info',
@@ -24,6 +28,10 @@ $statusColors = [
     'assembled'  => 'badge--primary',
     'received'   => 'badge--success',
     'cancelled'  => 'badge--danger',
+
+    'pending'    => 'badge--info',
+    'shipped'    => 'badge--warning',
+    'delivered'  => 'badge--success',
 ];
 $statuses = order_get_statuses();
 
