@@ -23,7 +23,7 @@ $pdo = db();
 $user_id = $_SESSION['user_id'];
 
 try {
-    // Проверяем принадлежность корзины пользователю и получаем цену товара
+    // корзина принадлежит пользователю, получение цены
     $stmt = $pdo->prepare("
         SELECT c.id, c.quantity, p.price 
         FROM cart c
@@ -39,16 +39,16 @@ try {
     }
 
     if ($quantity <= 0) {
-        // Удаляем товар
+        // удаление товара
         $stmt = $pdo->prepare("DELETE FROM cart WHERE id = ?");
         $stmt->execute([$cart_id]);
     } else {
-        // Обновляем количество
+        // обновление количества
         $stmt = $pdo->prepare("UPDATE cart SET quantity = ? WHERE id = ?");
         $stmt->execute([$quantity, $cart_id]);
     }
 
-    // Получаем общее количество
+    // общее количество
     $stmt = $pdo->prepare("SELECT COALESCE(SUM(quantity), 0) as total FROM cart WHERE user_id = ?");
     $stmt->execute([$user_id]);
     $cart_count = (int)($stmt->fetch()['total'] ?? 0);
@@ -63,4 +63,3 @@ try {
     error_log($e->getMessage());
     echo json_encode(['success' => false, 'error' => 'Ошибка базы данных: ' . $e->getMessage()]);
 }
-?>

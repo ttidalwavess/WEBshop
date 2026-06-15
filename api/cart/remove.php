@@ -22,7 +22,7 @@ $pdo = db();
 $user_id = $_SESSION['user_id'];
 
 try {
-    // Проверяем, что товар в корзине принадлежит текущему пользователю
+    // товар в корзине принадлежит текущему пользователю
     $stmt = $pdo->prepare("SELECT id FROM cart WHERE id = ? AND user_id = ?");
     $stmt->execute([$cart_id, $user_id]);
     if (!$stmt->fetch()) {
@@ -30,11 +30,11 @@ try {
         exit;
     }
 
-    // Удаляем товар
+    // удаление товара
     $stmt = $pdo->prepare("DELETE FROM cart WHERE id = ?");
     $stmt->execute([$cart_id]);
 
-    // Получаем общее количество товаров в корзине
+    // общее количество товаров в корзине
     $stmt = $pdo->prepare("SELECT COALESCE(SUM(quantity), 0) as total FROM cart WHERE user_id = ?");
     $stmt->execute([$user_id]);
     $cart_count = (int)($stmt->fetch()['total'] ?? 0);

@@ -24,7 +24,7 @@ $pdo = db();
 $user_id = $_SESSION['user_id'];
 
 try {
-    // Если такой товар с таким размером уже есть - увеличиваем количество
+    // увеличиваем количество одинакового размера
     $stmt = $pdo->prepare("
         INSERT INTO cart (user_id, product_id, size, quantity) 
         VALUES (?, ?, ?, ?)
@@ -32,7 +32,7 @@ try {
     ");
     $stmt->execute([$user_id, $product_id, $size, $quantity, $quantity]);
 
-    // Получаем общее количество товаров в корзине
+    // общее количество товаров в корзине
     $stmt = $pdo->prepare("SELECT COALESCE(SUM(quantity), 0) as total FROM cart WHERE user_id = ?");
     $stmt->execute([$user_id]);
     $cart_count = (int)$stmt->fetch()['total'];
@@ -42,4 +42,3 @@ try {
     error_log($e->getMessage());
     echo json_encode(['success' => false, 'message' => 'Ошибка: ' . $e->getMessage()]);
 }
-?>

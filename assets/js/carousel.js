@@ -25,13 +25,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             var n = visibleCount();
 
-            // Клоны в конец (первые N оригиналов)
+            // клоны в конец (первые N оригиналов)
             for (var i = 0; i < n; i++) {
                 var clone = origCards[i % total].cloneNode(true);
                 clone.dataset.clone = 'end';
                 track.appendChild(clone);
             }
-            // Клоны в начало (последние N оригиналов)
+            // клоны в начало (последние N оригиналов)
             for (var j = n - 1; j >= 0; j--) {
                 var c = origCards[(total - 1 - (n - 1 - j) % total)].cloneNode(true);
                 c.dataset.clone = 'start';
